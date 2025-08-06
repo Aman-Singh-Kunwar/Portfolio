@@ -24,17 +24,20 @@ A clean, responsive, and modern portfolio website to showcase my projects, skill
 - **Google Fonts**
 
 ## 📁 Folder Structure
+
+```
 portfolio/
-├── index.html         → Main HTML file
-├── style.css          → Website styling
-├── script.js          → JavaScript file (optional for interaction)
-├── cv.pdf             → Resume/CV
-├── images/            → Image assets
+├── index.html
+├── style.css
+├── script.js
+├── cv.pdf
+├── images/
 │   ├── bg_1.jpg
 │   ├── profile.jpg
 │   ├── project1.jpg
 │   └── project2.jpg
-└── README.md          → This file
+└── README.md
+```
 
 
 ## 📧 Contact
