@@ -22,11 +22,11 @@
 - **Purpose:** Showcase projects, skills, experience, and achievements with editable data.
 - **Live Demo:** [Portfolio Live Demo](https://aman-singh-kunwar.github.io/Portfolio/)
 - **Repository:** [Portfolio GitHub Repo](https://github.com/Aman-Singh-Kunwar/Portfolio)
-- **Screenshots:** [Portfolio Screenshots](https://github.com/Aman-Singh-Kunwar/Portfolio/frontend/client/public/images/portfolio.jpg)
+- **Screenshots:** ![Portfolio Screenshot](/frontend/client/public/images/portfolio.jpg)
 
 ---
 
-## Project Architecture
+## Project Architectures
 
 - **Client:** Public portfolio site (React + Tailwind + Vite).
 - **Admin:** Internal panel to edit JSON content (React + Tailwind + Vite).
