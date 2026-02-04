@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --bg: #0f172a;
+  --card: rgba(30, 41, 59, 0.7);
+  --border: rgba(148, 163, 184, 0.2);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(56, 189, 248, 0.15), transparent 60%),
+    radial-gradient(800px 600px at 80% 0%, rgba(248, 113, 113, 0.1), transparent 55%),
+    var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-lg;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-sm text-slate-200 focus:border-amber-300 focus:outline-none;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply btn bg-amber-400 text-slate-900 hover:bg-amber-300;
+  }
+
+  .btn-secondary {
+    @apply btn border border-white/20 text-white/90 hover:border-white/40;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em];
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-6;
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-panel {
+    @apply relative w-full max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-slate-950/90 shadow-2xl;
+  }
+
+  .modal-header {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-6 py-4;
+  }
+
+  .modal-body {
+    @apply h-[70vh] bg-slate-950/80;
+  }
+
+  .modal-iframe {
+    @apply h-full w-full;
+  }
+}

@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --bg: #0b1120;
+  --bg-soft: #111827;
+  --accent: #f59e0b;
+  --accent-2: #2dd4bf;
+  --card: rgba(15, 23, 42, 0.7);
+  --border: rgba(148, 163, 184, 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 600px at 10% 10%, rgba(45, 212, 191, 0.15), transparent 60%),
+    radial-gradient(800px 600px at 90% 10%, rgba(245, 158, 11, 0.18), transparent 55%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(59, 130, 246, 0.12), transparent 65%),
+    var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+}
+
+@layer components {
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-semibold;
+  }
+
+  .section-subtitle {
+    @apply text-sm uppercase tracking-[0.35em] text-slate-400;
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-lg;
+  }
+
+  .card-3d {
+    @apply transition-transform duration-300 ease-out;
+    transform-style: preserve-3d;
+  }
+
+  .card-3d:hover {
+    transform: translateY(-6px) rotateX(2deg) rotateY(-2deg);
+    box-shadow:
+      0 24px 60px rgba(15, 23, 42, 0.45),
+      0 8px 24px rgba(15, 23, 42, 0.35);
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em];
+  }
+
+  .chip:hover {
+    @apply border-white/30 bg-white/15;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-amber-400 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:bg-amber-300;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:border-white/40;
+  }
+
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .image-frame {
+    @apply overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg;
+  }
+
+  .image-frame img {
+    @apply transition-transform duration-500 ease-out;
+  }
+
+  .image-frame:hover img {
+    transform: scale(1.03);
+  }
+
+  .glow-ring {
+    box-shadow:
+      0 0 0 1px rgba(148, 163, 184, 0.18),
+      0 12px 30px rgba(14, 165, 233, 0.15),
+      0 18px 50px rgba(245, 158, 11, 0.15);
+  }
+}
