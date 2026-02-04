@@ -1,0 +1,7 @@
+# NOTE:
+# This repository is a Node/React (MERN) project.
+# Render uses the `package.json` files in `backend/`, `frontend/client/`,
+# and `frontend/admin/` to install dependencies.
+# This file exists only as a placeholder.
+Node
+React
