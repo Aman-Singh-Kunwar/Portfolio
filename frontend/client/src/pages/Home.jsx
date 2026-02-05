@@ -420,11 +420,13 @@ export default function Home({ portfolio, status }) {
                   }}
                 >
                   {project.image && (
-                    <img
-                      src={project.image}
-                      alt={project.name}
-                      className="h-64 w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02]"
-                    />
+                    <div className="m-4 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                      <img
+                        src={project.image}
+                        alt={project.name}
+                        className="w-full h-auto object-contain transition-transform duration-500 ease-out hover:scale-[1.02]"
+                      />
+                    </div>
                   )}
                   <div className="p-8">
                     <h3 className="text-xl font-semibold">{project.name}</h3>
