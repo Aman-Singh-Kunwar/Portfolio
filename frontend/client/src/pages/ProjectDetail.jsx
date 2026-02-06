@@ -102,6 +102,9 @@ export default function ProjectDetail({ portfolio }) {
               <img
                 src={project.image}
                 alt={project.name}
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
                 className="max-h-[70vh] w-full bg-slate-950/40 object-contain"
               />
             </a>

@@ -38,6 +38,7 @@ router.get("/", async (req, res) => {
     if (!doc) {
       return res.status(404).json({ error: "Portfolio not found" });
     }
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     return res.json(doc.data);
   } catch (error) {
     return res.status(500).json({ error: "Failed to fetch portfolio" });

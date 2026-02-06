@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import compression from "compression";
 import portfolioRoutes from "./routes/portfolio.js";
 import { connectAndSeed } from "./db.js";
 
@@ -24,6 +25,7 @@ app.use(
     credentials: true
   })
 );
+app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", (req, res) => {

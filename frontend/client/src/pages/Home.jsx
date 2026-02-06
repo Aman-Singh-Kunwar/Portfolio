@@ -221,10 +221,13 @@ export default function Home({ portfolio, status }) {
           </div>
           <div className="space-y-6">
             {(hero.image || basics.avatarUrl) && (
-              <div className="image-frame card-3d p-0">
+              <div className="image-frame card-3d p-0 hidden md:block">
                 <img
                   src={hero.image || basics.avatarUrl}
                   alt={hero.name}
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
                   className="h-[420px] w-full object-cover object-top"
                 />
               </div>
@@ -424,6 +427,8 @@ export default function Home({ portfolio, status }) {
                       <img
                         src={project.image}
                         alt={project.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto object-contain transition-transform duration-500 ease-out hover:scale-[1.02]"
                       />
                     </div>
@@ -494,6 +499,8 @@ export default function Home({ portfolio, status }) {
                       <img
                         src={item.coverImage}
                         alt={item.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto object-contain"
                       />
                     </div>

@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { fetchPortfolio } from "./api";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
 import Home from "./pages/Home.jsx";
-import ProjectDetail from "./pages/ProjectDetail.jsx";
-import AchievementDetail from "./pages/AchievementDetail.jsx";
+
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
+const AchievementDetail = lazy(() => import("./pages/AchievementDetail.jsx"));
 
 const fallbackData = {
   meta: {
@@ -299,14 +300,26 @@ export default function App() {
       <div className="min-h-screen">
         <Header hero={portfolio.hero} basics={portfolio.basics} />
         <main>
-          <Routes>
-            <Route path="/" element={<Home portfolio={portfolio} status={status} />} />
-            <Route path="/projects/:slug" element={<ProjectDetail portfolio={portfolio} />} />
-            <Route
-              path="/achievements/:slug"
-              element={<AchievementDetail portfolio={portfolio} />}
-            />
-          </Routes>
+          <Suspense
+            fallback={
+              <section className="section">
+                <div className="mx-auto max-w-4xl px-6">
+                  <div className="card p-8 text-center text-sm text-slate-300">
+                    Loading details...
+                  </div>
+                </div>
+              </section>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<Home portfolio={portfolio} status={status} />} />
+              <Route path="/projects/:slug" element={<ProjectDetail portfolio={portfolio} />} />
+              <Route
+                path="/achievements/:slug"
+                element={<AchievementDetail portfolio={portfolio} />}
+              />
+            </Routes>
+          </Suspense>
         </main>
         <Footer />
       </div>

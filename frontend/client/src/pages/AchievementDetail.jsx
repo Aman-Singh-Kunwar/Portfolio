@@ -104,6 +104,9 @@ export default function AchievementDetail({ portfolio }) {
                 <img
                   src={currentPhoto}
                   alt={achievement.title}
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
                   className="w-full h-auto object-contain"
                 />
               </div>
@@ -124,7 +127,13 @@ export default function AchievementDetail({ portfolio }) {
                       index === activeIndex ? "border-amber-300/60" : "border-white/10"
                     }`}
                   >
-                    <img src={photo} alt="" className="h-full w-full object-cover" />
+                    <img
+                      src={photo}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
