@@ -237,137 +237,143 @@ export default function App() {
           </div>
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1fr_1.8fr]">
-          <div className="flex flex-col gap-6">
-            <div className="card p-6 space-y-4">
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  API URL
-                </label>
-                <input
-                  className="input mt-2"
-                  value={apiUrl}
-                  onChange={(event) => setApiUrl(event.target.value)}
-                  placeholder="http://localhost:4000"
-                />
+        <main>
+          <section className="grid gap-6 lg:grid-cols-[1fr_1.8fr]">
+            <div className="flex flex-col gap-6">
+              <div className="card p-6 space-y-4">
+                <div>
+                  <label htmlFor="api-url-input" className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                    API URL
+                  </label>
+                  <input
+                    id="api-url-input"
+                    className="input mt-2"
+                    value={apiUrl}
+                    onChange={(event) => setApiUrl(event.target.value)}
+                    placeholder="http://localhost:4000"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="client-url-input" className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                    Client Preview URL
+                  </label>
+                  <input
+                    id="client-url-input"
+                    className="input mt-2"
+                    value={clientUrl}
+                    onChange={(event) => setClientUrl(event.target.value)}
+                    placeholder="http://localhost:5173"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="admin-token-input" className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                    Admin Token
+                  </label>
+                  <input
+                    id="admin-token-input"
+                    className="input mt-2"
+                    value={token}
+                    onChange={(event) => setToken(event.target.value)}
+                    placeholder="change-me"
+                  />
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button type="button" className="btn-primary" onClick={handleLoad}>
+                    Load Data
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn-secondary ${!isValidJson ? "opacity-50 cursor-not-allowed" : ""}`}
+                    onClick={handleSave}
+                    disabled={!isValidJson}
+                  >
+                    Save Updates
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={handleDownload}>
+                    Download JSON
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Upload JSON
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="application/json"
+                    className="hidden"
+                    onChange={handleUpload}
+                  />
+                </div>
+                <div className="text-xs text-slate-400">
+                  Last sync: <span className="text-slate-200">{lastLoadedAt || "Not yet"}</span>
+                </div>
+                {message && <p className="text-xs text-amber-200">{message}</p>}
               </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Client Preview URL
-                </label>
-                <input
-                  className="input mt-2"
-                  value={clientUrl}
-                  onChange={(event) => setClientUrl(event.target.value)}
-                  placeholder="http://localhost:5173"
-                />
+
+              <div className="card p-6 space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  <button type="button" className="btn-secondary" onClick={handleCopy}>
+                    Copy JSON
+                  </button>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Tips</p>
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-300">
+                    <li>Keep the JSON valid before saving.</li>
+                    <li>Use unique project `slug` values for clean URLs.</li>
+                    <li>Save updates after editing and refresh the client.</li>
+                  </ul>
+                </div>
               </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Admin Token
-                </label>
-                <input
-                  className="input mt-2"
-                  value={token}
-                  onChange={(event) => setToken(event.target.value)}
-                  placeholder="change-me"
-                />
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button type="button" className="btn-primary" onClick={handleLoad}>
-                  Load Data
-                </button>
-                <button
-                  type="button"
-                  className={`btn-secondary ${!isValidJson ? "opacity-50 cursor-not-allowed" : ""}`}
-                  onClick={handleSave}
-                  disabled={!isValidJson}
-                >
-                  Save Updates
-                </button>
-                <button type="button" className="btn-secondary" onClick={handleDownload}>
-                  Download JSON
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  Upload JSON
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/json"
-                  className="hidden"
-                  onChange={handleUpload}
-                />
-              </div>
-              <div className="text-xs text-slate-400">
-                Last sync: <span className="text-slate-200">{lastLoadedAt || "Not yet"}</span>
-              </div>
-              {message && <p className="text-xs text-amber-200">{message}</p>}
             </div>
 
-            <div className="card p-6 space-y-4">
-              <div className="flex flex-wrap gap-3">
-                <button type="button" className="btn-secondary" onClick={handleCopy}>
-                  Copy JSON
-                </button>
+            <div className="card p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <label htmlFor="portfolio-json-editor" className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                    Portfolio JSON
+                  </label>
+                  <p className="text-xs text-slate-400">Edit with care and keep the structure intact.</p>
+                </div>
+                <div className="badge">
+                  <span className="text-slate-400">JSON</span>
+                  <span className={isValidJson ? "text-emerald-200" : "text-rose-200"}>
+                    {isValidJson ? "Valid" : "Invalid"}
+                  </span>
+                </div>
               </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Tips</p>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-300">
-                  <li>Keep the JSON valid before saving.</li>
-                  <li>Use unique project `slug` values for clean URLs.</li>
-                  <li>Save updates after editing and refresh the client.</li>
-                </ul>
+              <textarea
+                id="portfolio-json-editor"
+                className="mt-4 h-[520px] w-full rounded-xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-200 focus:border-amber-300 focus:outline-none"
+                value={jsonText}
+                onChange={(event) => setJsonText(event.target.value)}
+              />
+
+              {!isValidJson && (
+                <p className="mt-4 text-xs text-rose-200">
+                  JSON is invalid. Fix errors before saving or previewing the client.
+                </p>
+              )}
+
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <div className="text-xs text-slate-400">
+                  Preview the live client using the URL above.
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button type="button" className="btn-secondary" onClick={handleOpenPreview}>
+                    Preview Client
+                  </button>
+                  <a href={clientUrl} target="_blank" rel="noreferrer" className="btn-secondary">
+                    Open in New Tab
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <label className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  Portfolio JSON
-                </label>
-                <p className="text-xs text-slate-400">Edit with care and keep the structure intact.</p>
-              </div>
-              <div className="badge">
-                <span className="text-slate-400">JSON</span>
-                <span className={isValidJson ? "text-emerald-200" : "text-rose-200"}>
-                  {isValidJson ? "Valid" : "Invalid"}
-                </span>
-              </div>
-            </div>
-            <textarea
-              className="mt-4 h-[520px] w-full rounded-xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-200 focus:border-amber-300 focus:outline-none"
-              value={jsonText}
-              onChange={(event) => setJsonText(event.target.value)}
-            />
-
-            {!isValidJson && (
-              <p className="mt-4 text-xs text-rose-200">
-                JSON is invalid. Fix errors before saving or previewing the client.
-              </p>
-            )}
-
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="text-xs text-slate-400">
-                Preview the live client using the URL above.
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button type="button" className="btn-secondary" onClick={handleOpenPreview}>
-                  Preview Client
-                </button>
-                <a href={clientUrl} target="_blank" rel="noreferrer" className="btn-secondary">
-                  Open in New Tab
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        </main>
       </div>
 
       {isPreviewOpen && (

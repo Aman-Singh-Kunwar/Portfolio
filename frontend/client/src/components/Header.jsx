@@ -13,6 +13,7 @@ const navLinks = [
 
 export default function Header({ hero, basics }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const avatarSrc = basics?.avatarThumbUrl || "/images/me-avatar.jpg";
   const closeMobile = () => setMobileOpen(false);
   const headerRef = useRef(null);
 
@@ -45,10 +46,17 @@ export default function Header({ hero, basics }) {
         <Link to="/" className="flex items-center gap-3">
           {basics?.avatarUrl ? (
             <img
-              src={basics.avatarUrl}
+              src={avatarSrc}
               alt={hero?.name || "Profile"}
-              loading="eager"
+              width="40"
+              height="40"
+              loading="lazy"
               decoding="async"
+              fetchPriority="low"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = basics?.avatarUrl || "/images/me.jpg";
+              }}
               className="h-10 w-10 rounded-full border border-white/10 object-cover"
             />
           ) : (
@@ -63,7 +71,7 @@ export default function Header({ hero, basics }) {
         </Link>
         <div className="hidden items-center gap-6 text-sm text-slate-300 lg:flex">
           {navLinks.map((link) => (
-            <a key={link.href} href={`/${link.href}`} className="hover:text-white">
+            <a key={link.href} href={link.href} className="hover:text-white">
               {link.label}
             </a>
           ))}
@@ -105,7 +113,7 @@ export default function Header({ hero, basics }) {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={`/${link.href}`}
+                href={link.href}
                 className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-white"
                 onClick={closeMobile}
               >

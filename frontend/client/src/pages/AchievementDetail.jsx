@@ -20,6 +20,10 @@ export default function AchievementDetail({ portfolio }) {
   useEffect(() => {
     setActiveIndex(0);
   }, [achievement?.title]);
+  const setAchievementFallbackImage = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/images/hackthewinter.jpg";
+  };
 
   if (!achievement) {
     return (
@@ -39,9 +43,14 @@ export default function AchievementDetail({ portfolio }) {
     );
   }
 
-  const photos = (achievement.photos || []).filter(Boolean);
+  const photos = (achievement.photos || [])
+    .map((photo) => (typeof photo === "string" ? photo.trim() : ""))
+    .filter(Boolean);
   const hasPhotos = photos.length > 0;
-  const currentPhoto = hasPhotos ? photos[activeIndex] : null;
+  const coverImage = typeof achievement.coverImage === "string" ? achievement.coverImage.trim() : "";
+  const currentPhoto = hasPhotos
+    ? photos[activeIndex]
+    : coverImage || "/images/hackthewinter.jpg";
 
   const handlePrev = () => {
     if (!hasPhotos) return;
@@ -99,14 +108,16 @@ export default function AchievementDetail({ portfolio }) {
               )}
             </div>
 
-            {hasPhotos ? (
+            {currentPhoto ? (
               <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
                 <img
                   src={currentPhoto}
                   alt={achievement.title}
+                  width="1400"
+                  height="788"
                   loading="eager"
                   decoding="async"
-                  fetchpriority="high"
+                  onError={setAchievementFallbackImage}
                   className="w-full h-auto object-contain"
                 />
               </div>
@@ -130,8 +141,12 @@ export default function AchievementDetail({ portfolio }) {
                     <img
                       src={photo}
                       alt=""
-                      loading="lazy"
+                      width="160"
+                      height="128"
+                      loading={Math.abs(index - activeIndex) <= 1 ? "eager" : "lazy"}
                       decoding="async"
+                      fetchPriority="low"
+                      onError={setAchievementFallbackImage}
                       className="h-full w-full object-cover"
                     />
                   </button>

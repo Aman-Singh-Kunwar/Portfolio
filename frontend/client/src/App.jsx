@@ -3,10 +3,12 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { fetchPortfolio } from "./api";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
+import SeoManager from "./components/SeoManager.jsx";
 import Home from "./pages/Home.jsx";
 
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
 const AchievementDetail = lazy(() => import("./pages/AchievementDetail.jsx"));
+const PORTFOLIO_CACHE_KEY = "portfolio-cache-v1";
 
 const fallbackData = {
   meta: {
@@ -125,7 +127,7 @@ const fallbackData = {
         "Interactive map experience for route visualization"
       ],
       tech: ["React", "Tailwind CSS", "Node.js", "MongoDB", "Flask", "Leaflet"],
-      image: "/images/project1.jpg",
+      image: "/images/ecocommute.jpg",
       links: {
         demo: "https://ecocommute-frontend.onrender.com/",
         repo: "https://github.com/Aman-Singh-Kunwar/EcoCommute"
@@ -142,7 +144,7 @@ const fallbackData = {
         "React frontend with a responsive, mobile-first UI"
       ],
       tech: ["Node.js", "React", "Redis", "MongoDB", "Kafka", "Socket.IO", "Tailwind CSS", "Docker"],
-      image: "/images/project2.jpg",
+      image: "/images/eventory.jpg",
       links: {
         demo: "",
         repo: "https://github.com/Aman-Singh-Kunwar/Eventory"
@@ -157,8 +159,8 @@ const fallbackData = {
         "Projects, skills, and contact sections",
         "Includes a downloadable resume"
       ],
-      tech: ["HTML", "CSS", "JavaScript"],
-      image: "",
+      tech: ["React", "Vite", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
+      image: "/images/portfolio.jpg",
       links: {
         demo: "https://aman-singh-kunwar.github.io/Portfolio/",
         repo: "https://github.com/Aman-Singh-Kunwar/Portfolio"
@@ -174,7 +176,7 @@ const fallbackData = {
         "Score tracking for best performance"
       ],
       tech: ["HTML", "CSS", "JavaScript"],
-      image: "",
+      image: "/images/simonsaygame.jpg",
       links: {
         demo: "https://aman-singh-kunwar.github.io/Simon-say-game/",
         repo: "https://github.com/Aman-Singh-Kunwar/Simon-say-game"
@@ -189,8 +191,8 @@ const fallbackData = {
         "Backend service and supporting documentation included",
         "Live demo hosted online"
       ],
-      tech: ["JavaScript", "AI"],
-      image: "",
+      tech: ["React.js (18)", "Tailwind CSS", "Vite", "Node.js (24)", "Express.js", "MongoDB Atlas", "Gemini-2.5-flash APIs"],
+      image: "/images/adhyanai.jpg",
       links: {
         demo: "https://adhyan-ai.onrender.com/",
         repo: "https://github.com/HacktheWinter/ADHYAN.AI"
@@ -270,9 +272,18 @@ const fallbackData = {
   }
 };
 
+function getCachedPortfolio() {
+  try {
+    const raw = localStorage.getItem(PORTFOLIO_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function App() {
-  const [portfolio, setPortfolio] = useState(fallbackData);
-  const [status, setStatus] = useState("loading");
+  const [portfolio, setPortfolio] = useState(() => getCachedPortfolio() || fallbackData);
+  const [status, setStatus] = useState(() => (getCachedPortfolio() ? "ready" : "loading"));
 
   useEffect(() => {
     let active = true;
@@ -282,6 +293,11 @@ export default function App() {
         if (active) {
           setPortfolio(data);
           setStatus("ready");
+          try {
+            localStorage.setItem(PORTFOLIO_CACHE_KEY, JSON.stringify(data));
+          } catch {
+            // Ignore storage failures and continue with in-memory data.
+          }
         }
       })
       .catch(() => {
@@ -298,6 +314,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen">
+        <SeoManager portfolio={portfolio} />
         <Header hero={portfolio.hero} basics={portfolio.basics} />
         <main>
           <Suspense

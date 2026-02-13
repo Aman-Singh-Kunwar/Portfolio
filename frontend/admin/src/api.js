@@ -1,5 +1,8 @@
 export function getApiUrl() {
-  return import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const defaultApiUrl = import.meta.env.PROD
+    ? "https://aman-singh-kunwar-portfolio.onrender.com"
+    : "http://localhost:4000";
+  return import.meta.env.VITE_API_URL || defaultApiUrl;
 }
 
 export async function fetchPortfolio(apiUrl) {

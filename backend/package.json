@@ -6,6 +6,10 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js"
   },
+  "engines": {
+    "node": ">=22 <25",
+    "npm": ">=10"
+  },
   "dependencies": {
     "compression": "^1.8.1",
     "cors": "^2.8.5",

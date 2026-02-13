@@ -25,14 +25,14 @@ body {
     radial-gradient(1000px 700px at 50% 100%, rgba(59, 130, 246, 0.12), transparent 65%),
     var(--bg);
   color: var(--ink);
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-family: "Segoe UI", "Trebuchet MS", "Helvetica Neue", Arial, sans-serif;
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -101,6 +101,16 @@ a {
 
   .image-frame:hover img {
     transform: scale(1.03);
+  }
+
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 620px;
+  }
+
+  .section-deferred {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 900px;
   }
 
   .glow-ring {

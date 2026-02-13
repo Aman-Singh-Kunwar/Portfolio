@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { FaJava, FaGithub, FaLinkedin } from "react-icons/fa6";
 import {
   SiC,
@@ -17,6 +18,10 @@ export default function Home({ portfolio, status }) {
   const { hero, basics, about, skills, techStack, experience, education, projects, achievements } =
     portfolio;
   const navigate = useNavigate();
+  const [showDesktopPhoto, setShowDesktopPhoto] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 768px)").matches;
+  });
   const availability = basics.availability || "Open to internships and junior full stack roles";
   const mailtoLink = basics.email ? `mailto:${basics.email}?subject=Work%20Opportunity` : "";
   const organizationLinks = {
@@ -141,10 +146,37 @@ export default function Home({ portfolio, status }) {
   const handleCardNavigate = (slug) => {
     navigate(`/projects/${slug}`);
   };
+  const profileImage = (hero.image || basics.avatarUrl || "").trim();
 
   const stopPropagation = (event) => {
     event.stopPropagation();
   };
+  const setProjectFallbackImage = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/images/portfolio.jpg";
+  };
+  const setAchievementFallbackImage = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/images/hackthewinter.jpg";
+  };
+  const setProfileFallbackImage = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/images/me.jpg";
+  };
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const update = () => setShowDesktopPhoto(mediaQuery.matches);
+    update();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", update);
+      return () => mediaQuery.removeEventListener("change", update);
+    }
+
+    mediaQuery.addListener(update);
+    return () => mediaQuery.removeListener(update);
+  }, []);
 
   return (
     <>
@@ -220,14 +252,17 @@ export default function Home({ portfolio, status }) {
             )}
           </div>
           <div className="space-y-6">
-            {(hero.image || basics.avatarUrl) && (
+            {showDesktopPhoto && profileImage && (
               <div className="image-frame card-3d p-0 hidden md:block">
                 <img
-                  src={hero.image || basics.avatarUrl}
+                  src={profileImage}
                   alt={hero.name}
+                  width="800"
+                  height="420"
                   loading="eager"
                   decoding="async"
-                  fetchpriority="high"
+                  fetchPriority="high"
+                  onError={setProfileFallbackImage}
                   className="h-[420px] w-full object-cover object-top"
                 />
               </div>
@@ -236,7 +271,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="about" className="section">
+      <section id="about" className="section section-deferred">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="section-subtitle">About</p>
@@ -287,7 +322,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="skills" className="section">
+      <section id="skills" className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
           <p className="section-subtitle">Skills</p>
           <h2 className="section-title">Technical proficiency</h2>
@@ -355,7 +390,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="experience" className="section">
+      <section id="experience" className="section section-deferred">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-2">
           <div>
             <p className="section-subtitle">Experience</p>
@@ -401,17 +436,18 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="projects" className="section">
+      <section id="projects" className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
           <p className="section-subtitle">Projects</p>
           <h2 className="section-title">Selected work</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {projects.map((project) => {
               const slug = getSlug(project);
+              const projectImage = typeof project.image === "string" ? project.image.trim() : "";
               return (
                 <div
                   key={project.name}
-                  className="card card-3d overflow-hidden cursor-pointer transition hover:border-white/20"
+                  className="card card-3d cv-auto overflow-hidden cursor-pointer transition hover:border-white/20"
                   role="button"
                   tabIndex={0}
                   onClick={() => handleCardNavigate(slug)}
@@ -422,13 +458,17 @@ export default function Home({ portfolio, status }) {
                     }
                   }}
                 >
-                  {project.image && (
+                  {projectImage && (
                     <div className="m-4 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                       <img
-                        src={project.image}
+                        src={projectImage}
                         alt={project.name}
+                        width="1200"
+                        height="675"
                         loading="lazy"
                         decoding="async"
+                        fetchPriority="low"
+                        onError={setProjectFallbackImage}
                         className="w-full h-auto object-contain transition-transform duration-500 ease-out hover:scale-[1.02]"
                       />
                     </div>
@@ -474,7 +514,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="achievements" className="section">
+      <section id="achievements" className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
           <p className="section-subtitle">Achievements</p>
           <h2 className="section-title">Certifications & milestones</h2>
@@ -483,8 +523,10 @@ export default function Home({ portfolio, status }) {
           </p>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {(achievements || []).length > 0 ? (
-              achievements.map((item) => (
-                <div key={item.title} className="card card-3d p-6">
+              achievements.map((item) => {
+                const coverImage = typeof item.coverImage === "string" ? item.coverImage.trim() : "";
+                return (
+                <div key={item.title} className="card card-3d cv-auto p-6">
                   {item.issuer && (
                     <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
                       {item.issuer}
@@ -494,13 +536,17 @@ export default function Home({ portfolio, status }) {
                   {item.summary && (
                     <p className="mt-3 text-sm text-slate-300">{item.summary}</p>
                   )}
-                  {item.coverImage && (
+                  {coverImage && (
                     <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-white/5">
                       <img
-                        src={item.coverImage}
+                        src={coverImage}
                         alt={item.title}
+                        width="1200"
+                        height="675"
                         loading="lazy"
                         decoding="async"
+                        fetchPriority="low"
+                        onError={setAchievementFallbackImage}
                         className="w-full h-auto object-contain"
                       />
                     </div>
@@ -514,7 +560,8 @@ export default function Home({ portfolio, status }) {
                     </Link>
                   </div>
                 </div>
-              ))
+                );
+              })
             ) : (
               <>
                 <div className="card card-3d p-6">
@@ -541,7 +588,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
           <p className="section-subtitle">Find Me</p>
           <h2 className="section-title">Find me on GitHub and LinkedIn</h2>
@@ -573,7 +620,7 @@ export default function Home({ portfolio, status }) {
         </div>
       </section>
 
-      <section id="hire-me" className="section">
+      <section id="hire-me" className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
           <p className="section-subtitle">Hire Me</p>
           <div className="card card-3d p-8 md:p-10">

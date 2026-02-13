@@ -8,6 +8,10 @@ export default function ProjectDetail({ portfolio }) {
   const { slug } = useParams();
   const projects = portfolio.projects || [];
   const project = projects.find((item) => getSlug(item) === slug);
+  const setProjectFallbackImage = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/images/portfolio.jpg";
+  };
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [slug]);
@@ -85,6 +89,9 @@ export default function ProjectDetail({ portfolio }) {
     );
   }
 
+  const projectImageRaw = typeof project.image === "string" ? project.image.trim() : "";
+  const projectImage = projectImageRaw || "/images/portfolio.jpg";
+
   return (
     <section className="section">
       <div className="mx-auto max-w-5xl px-6">
@@ -97,14 +104,16 @@ export default function ProjectDetail({ portfolio }) {
         </div>
 
         <div className="card card-3d overflow-hidden">
-          {project.image && (
-            <a href={project.image} target="_blank" rel="noreferrer" className="block image-frame">
+          {(project.image || projectImage) && (
+            <a href={projectImage} target="_blank" rel="noreferrer" className="block image-frame">
               <img
-                src={project.image}
+                src={projectImage}
                 alt={project.name}
+                width="1400"
+                height="788"
                 loading="eager"
                 decoding="async"
-                fetchpriority="high"
+                onError={setProjectFallbackImage}
                 className="max-h-[70vh] w-full bg-slate-950/40 object-contain"
               />
             </a>
