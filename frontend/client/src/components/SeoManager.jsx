@@ -56,9 +56,9 @@ export default function SeoManager({ portfolio }) {
   const location = useLocation();
 
   useEffect(() => {
-    const siteUrl = import.meta.env.VITE_SITE_URL || "https://aman-singh-kunwar-portfolio1.onrender.com";
+    const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
     const path = location.pathname || "/";
-    const canonicalUrl = `${window.location.origin}${window.location.pathname}`;
+    const canonicalUrl = new URL(path, siteUrl).toString();
     const projects = portfolio.projects || [];
     const achievements = portfolio.achievements || [];
     const project = projects.find((item) => `/projects/${getProjectSlug(item)}` === path);

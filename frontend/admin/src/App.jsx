@@ -38,13 +38,15 @@ const formatTime = () => new Date().toLocaleString();
 
 export default function App() {
   const [apiUrl, setApiUrl] = useState(getApiUrl());
-  const [token, setToken] = useState(() => localStorage.getItem("admin_token") || "");
+  const [token, setToken] = useState(() => sessionStorage.getItem("admin_token") || "");
   const [clientUrl, setClientUrl] = useState(
     () => localStorage.getItem("client_url") || "http://localhost:5173"
   );
   const [jsonText, setJsonText] = useState(() => JSON.stringify(template, null, 2));
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
+  const [messageDetails, setMessageDetails] = useState([]);
+  const [showToken, setShowToken] = useState(false);
   const [lastSnapshot, setLastSnapshot] = useState("");
   const [lastLoadedAt, setLastLoadedAt] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -53,7 +55,11 @@ export default function App() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem("admin_token", token);
+    if (token) {
+      sessionStorage.setItem("admin_token", token);
+    } else {
+      sessionStorage.removeItem("admin_token");
+    }
   }, [token]);
 
   useEffect(() => {
@@ -105,6 +111,7 @@ export default function App() {
   const handleLoad = async () => {
     setStatus("loading");
     setMessage("");
+    setMessageDetails([]);
 
     try {
       const data = await fetchPortfolio(apiUrl);
@@ -117,6 +124,7 @@ export default function App() {
     } catch (error) {
       setStatus("error");
       setMessage(error.message);
+      setMessageDetails(error.details || []);
     }
   };
 
@@ -125,14 +133,30 @@ export default function App() {
       const parsed = JSON.parse(jsonText);
       setJsonText(JSON.stringify(parsed, null, 2));
       setMessage("Formatted JSON.");
+      setMessageDetails([]);
     } catch (error) {
       setMessage("Invalid JSON. Fix errors before formatting.");
+      setMessageDetails([]);
     }
   };
 
   const handleSave = async () => {
+    if (!token.trim()) {
+      setStatus("error");
+      setMessage("Admin token is required before saving.");
+      setMessageDetails([]);
+      return;
+    }
+
+    if (!window.confirm("Publish these portfolio changes now?")) {
+      setMessage("Save cancelled.");
+      setMessageDetails([]);
+      return;
+    }
+
     setStatus("saving");
     setMessage("");
+    setMessageDetails([]);
 
     try {
       const parsed = JSON.parse(jsonText);
@@ -143,9 +167,11 @@ export default function App() {
       setLastLoadedAt(formatTime());
       setStatus("saved");
       setMessage("Portfolio updated successfully.");
+      setMessageDetails([]);
     } catch (error) {
       setStatus("error");
       setMessage(error.message);
+      setMessageDetails(error.details || []);
     }
   };
 
@@ -156,15 +182,35 @@ export default function App() {
     }
     setJsonText(lastSnapshot);
     setMessage("Restored last loaded snapshot.");
+    setMessageDetails([]);
   };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(jsonText);
       setMessage("JSON copied to clipboard.");
+      setMessageDetails([]);
     } catch (error) {
       setMessage("Failed to copy. Try selecting the text manually.");
+      setMessageDetails([]);
     }
+  };
+
+  const handleValidate = () => {
+    try {
+      JSON.parse(jsonText);
+      setMessage("JSON syntax is valid.");
+      setMessageDetails([]);
+    } catch (error) {
+      setMessage("Invalid JSON. Fix syntax errors before saving.");
+      setMessageDetails([error.message]);
+    }
+  };
+
+  const handleClearToken = () => {
+    setToken("");
+    setMessage("Admin token cleared for this browser tab.");
+    setMessageDetails([]);
   };
 
   const handleDownload = () => {
@@ -190,8 +236,10 @@ export default function App() {
       JSON.parse(text);
       setJsonText(text);
       setMessage("Loaded JSON from file.");
+      setMessageDetails([]);
     } catch (error) {
       setMessage("Invalid JSON file. Please check the file content.");
+      setMessageDetails([]);
     } finally {
       event.target.value = "";
     }
@@ -269,13 +317,56 @@ export default function App() {
                   <label htmlFor="admin-token-input" className="text-xs uppercase tracking-[0.3em] text-slate-400">
                     Admin Token
                   </label>
-                  <input
-                    id="admin-token-input"
-                    className="input mt-2"
-                    value={token}
-                    onChange={(event) => setToken(event.target.value)}
-                    placeholder="change-me"
-                  />
+                  <div className="relative mt-2">
+                    <input
+                      id="admin-token-input"
+                      type={showToken ? "text" : "password"}
+                      className="input pr-12"
+                      value={token}
+                      onChange={(event) => setToken(event.target.value)}
+                      placeholder="change-me"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      onClick={() => setShowToken((visible) => !visible)}
+                      aria-label={showToken ? "Hide admin token" : "Show admin token"}
+                      title={showToken ? "Hide admin token" : "Show admin token"}
+                    >
+                      {showToken ? (
+                        <svg
+                          aria-hidden="true"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="m2 2 20 20" />
+                          <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                          <path d="M9.9 4.2A10.5 10.5 0 0 1 12 4c5 0 8.5 4 10 8a13.5 13.5 0 0 1-3 4.5" />
+                          <path d="M6.4 6.4A13.5 13.5 0 0 0 2 12c1.5 4 5 8 10 8a10.5 10.5 0 0 0 4.1-.8" />
+                        </svg>
+                      ) : (
+                        <svg
+                          aria-hidden="true"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <button type="button" className="btn-primary" onClick={handleLoad}>
@@ -288,6 +379,12 @@ export default function App() {
                     disabled={!isValidJson}
                   >
                     Save Updates
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={handleValidate}>
+                    Validate JSON
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={handleClearToken}>
+                    Clear Token
                   </button>
                   <button type="button" className="btn-secondary" onClick={handleDownload}>
                     Download JSON
@@ -311,6 +408,13 @@ export default function App() {
                   Last sync: <span className="text-slate-200">{lastLoadedAt || "Not yet"}</span>
                 </div>
                 {message && <p className="text-xs text-amber-200">{message}</p>}
+                {messageDetails.length > 0 && (
+                  <ul className="list-disc space-y-1 pl-5 text-xs text-rose-200">
+                    {messageDetails.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="card p-6 space-y-4">

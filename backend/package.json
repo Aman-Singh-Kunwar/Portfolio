@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/index.js",
-    "start": "node src/index.js"
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "check": "node --check server.js && node --check src/app.js && node --check src/db.js && node --check src/routes/portfolio.js && node --check src/routes/visits.js && node --check src/middleware/requireAdmin.js && node --check src/middleware/requestLogger.js && node --check src/validators/portfolio.js && node --check src/services/portfolioStore.js && node --check src/services/visitStore.js && node --check src/utils/logger.js"
   },
   "engines": {
     "node": ">=22 <25",

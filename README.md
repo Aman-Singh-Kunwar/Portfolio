@@ -1,81 +1,61 @@
 # Full Stack Portfolio (MERN)
 
-> A clean, responsive, full stack portfolio with a public client, an admin panel to edit content, and a Node/Express API backed by MongoDB. Content is stored in `data/portfolio.json` and synced to the database.
-
----
-
-## 📑 Table of Contents
-
-1. [Overview](#overview)
-2. [Project Architecture](#project-architecture)
-3. [Tech Stack](#tech-stack)
-4. [Features](#features)
-5. [Quick Start](#quick-start)
-6. [Updating Content](#updating-content)
-7. [License](#license)
-8. [Acknowledgments](#acknowledgments)
-
----
+Clean, responsive portfolio with a public client, an admin editor, and a Node/Express API backed by MongoDB. Portfolio content lives in `data/portfolio.json` and is synced into MongoDB by the backend.
 
 ## Overview
 
-- **Purpose:** Showcase projects, skills, experience, and achievements with editable data.
-- **Live Demo:** [Portfolio Live Demo](https://aman-singh-kunwar.github.io/Portfolio/)
-- **Repository:** [Portfolio GitHub Repo](https://github.com/Aman-Singh-Kunwar/Portfolio)
-- **Screenshots:** ![Portfolio Screenshot](/frontend/client/public/images/portfolio.jpg)
-
----
-
-## Project Architectures
-
-- **Client:** Public portfolio site (React + Tailwind + Vite).
-- **Admin:** Internal panel to edit JSON content (React + Tailwind + Vite).
-- **Backend:** Express API (CRUD for portfolio + auth guard).
+- **Purpose:** Showcase projects, skills, experience, education, and achievements.
+- **Client:** Public portfolio site built with React, Vite, and Tailwind CSS.
+- **Admin:** Internal JSON editor for portfolio content.
+- **Backend:** Express API with MongoDB, admin-token protection, validation, security headers, rate limiting, and structured logging.
 - **Database:** MongoDB via Mongoose.
-- **Data Sync:** JSON file ⇄ DB sync on backend startup.
 
-```
-portfolio/
-├── backend/
-├── data/
-│   └── portfolio.json
-├── frontend/
-│   ├── client/
-│   └── admin/
-└── README.md
-```
+## Project Architecture
 
----
+```txt
+Portfolio/
+  backend/
+    server.js
+    src/
+      app.js
+      config.js
+      db.js
+      middleware/
+      models/
+      routes/
+      services/
+      utils/
+      validators/
+  data/
+    portfolio.json
+  frontend/
+    client/
+    admin/
+```
 
 ## Tech Stack
 
 - **Frontend:** React, Vite, Tailwind CSS
 - **Admin:** React, Vite, Tailwind CSS
 - **Backend:** Node.js, Express
-- **Database:** MongoDB (Mongoose)
-
----
+- **Database:** MongoDB, Mongoose
 
 ## Features
 
-- Responsive client UI (projects, skills, experience, achievements)
-- Admin panel to edit JSON content
-- Project detail pages + achievement detail pages with gallery
-- MongoDB-backed API with auto-seed from `data/portfolio.json`
-- Local JSON + DB kept in sync on backend start
-
----
+- Responsive portfolio UI
+- Project detail pages
+- Achievement detail pages with gallery support
+- Admin JSON editor
+- MongoDB-backed API
+- Portfolio JSON validation before saving
+- Local JSON and database sync
+- Request hardening with CORS, security headers, rate limits, and admin auth
 
 ## Quick Start
 
-### 1) Backend
+### Backend
 
-1. Create `backend/.env` and set values:
-   - `PORT`
-   - `MONGO_URI`
-   - `ADMIN_TOKEN`
-   - `CORS_ORIGINS`
-2. Install and run:
+Create `backend/.env` with your local values, then run:
 
 ```bash
 cd backend
@@ -83,11 +63,24 @@ npm install
 npm run dev
 ```
 
-### 2) Client
+Required backend environment variables:
 
-1. Create `frontend/client/.env` if needed:
-   - `VITE_API_URL`
-2. Install and run:
+```env
+PORT=4000
+NODE_ENV=development
+MONGO_URI=your_mongodb_connection_string
+ADMIN_TOKEN=your_admin_token
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+CLIENT_URL=http://localhost:5173
+ADMIN_URL=http://localhost:5174
+JSON_BODY_LIMIT=1mb
+CACHE_SECONDS=60
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX=120
+LOG_LEVEL=info
+```
+
+### Client
 
 ```bash
 cd frontend/client
@@ -95,11 +88,14 @@ npm install
 npm run dev
 ```
 
-### 3) Admin
+Optional client environment variable:
 
-1. Create `frontend/admin/.env` if needed:
-   - `VITE_API_URL`
-2. Install and run:
+```env
+VITE_API_URL=http://localhost:4000
+VITE_SITE_URL=http://localhost:5173
+```
+
+### Admin
 
 ```bash
 cd frontend/admin
@@ -107,15 +103,47 @@ npm install
 npm run dev
 ```
 
+Optional admin environment variable:
+
+```env
+VITE_API_URL=http://localhost:4000
+```
+
 ## Updating Content
 
-- **Admin UI (recommended):** Load JSON, edit, and save.
-- **Manual:** Edit `data/portfolio.json` and restart backend to sync.
+- Use the admin app to load, validate, edit, and save portfolio JSON.
+- Or edit `data/portfolio.json` manually and restart the backend to sync it into MongoDB.
 
----
+## Visitor Count and Render Sleep
 
-## 📜 License
+The client counts one visitor per browser session. It retries quietly in the background so a sleeping free Render backend can wake up and still count the visitor.
+
+For faster cold starts, you can optionally add an UptimeRobot monitor:
+
+- **Monitor type:** HTTP(s)
+- **URL:** `https://your-backend.onrender.com/api/health`
+- **Interval:** 10 or 15 minutes
+- **Expected status:** `200`
+
+The health endpoint returns a small no-cache JSON response and does not increment visitor count.
+
+## Useful Commands
+
+```bash
+cd backend
+npm run check
+```
+
+```bash
+cd frontend/client
+npm run build
+```
+
+```bash
+cd frontend/admin
+npm run build
+```
+
+## License
 
 This project is open-source and free to use.
-
----

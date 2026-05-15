@@ -28,3 +28,46 @@ export async function fetchPortfolio({ timeoutMs = 4500 } = {}) {
 
   return response.json();
 }
+
+export async function fetchVisitCount({ timeoutMs = 3000 } = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(`${API_URL}/api/visits`, {
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch visit count");
+    }
+
+    return response.json();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+export async function countVisitSession(sessionId, { timeoutMs = 3000 } = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(`${API_URL}/api/visits/session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ sessionId }),
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to count visit");
+    }
+
+    return response.json();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}

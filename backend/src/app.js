@@ -1,44 +1,55 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import compression from "compression";
 import portfolioRoutes from "./routes/portfolio.js";
-import { connectAndSeed } from "./db.js";
-
-dotenv.config();
+import visitRoutes from "./routes/visits.js";
+import { config, isProduction } from "./config.js";
+import { createRateLimiter } from "./middleware/rateLimit.js";
+import { requestLogger } from "./middleware/requestLogger.js";
+import { securityHeaders } from "./middleware/security.js";
+import { escapeHtml, sendError } from "./utils/http.js";
+import { logger } from "./utils/logger.js";
 
 const app = express();
-const port = process.env.PORT || 4000;
-const mongoUri = process.env.MONGO_URI;
-const corsOrigins = (process.env.CORS_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
 
-if (!mongoUri) {
-  throw new Error("MONGO_URI is required. See backend/.env.example");
-}
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: corsOrigins.length ? corsOrigins : true,
+    origin(origin, callback) {
+      if (!origin || !config.corsOrigins.length || config.corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true
   })
 );
 app.use(compression());
-app.use(express.json({ limit: "1mb" }));
+app.use(securityHeaders);
+app.use(requestLogger);
+app.use(createRateLimiter({ windowMs: config.rateLimitWindowMs, max: config.rateLimitMax }));
+app.use(express.json({ limit: config.bodyLimit }));
 
 function renderBackendPage({ title, heading, message, reqPath, links }) {
   const linkItems = links
-    .map((link) => `<li><a href="${link.href}">${link.label}</a></li>`)
+    .map(
+      (link) =>
+        `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`
+    )
     .join("");
+  const safeTitle = escapeHtml(title);
+  const safeHeading = escapeHtml(heading);
+  const safeMessage = escapeHtml(message);
+  const safeReqPath = escapeHtml(reqPath);
 
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
+    <title>${safeTitle}</title>
     <meta name="description" content="Portfolio backend API service status and route information." />
     <style>
       :root {
@@ -85,9 +96,9 @@ function renderBackendPage({ title, heading, message, reqPath, links }) {
   </head>
   <body>
     <main id="main">
-      <h1>${heading}</h1>
-      <p>${message}</p>
-      <p>Requested path: <code>${reqPath}</code></p>
+      <h1>${safeHeading}</h1>
+      <p>${safeMessage}</p>
+      <p>Requested path: <code>${safeReqPath}</code></p>
       <h2>Useful endpoints</h2>
       <ul>
         ${linkItems}
@@ -98,10 +109,17 @@ function renderBackendPage({ title, heading, message, reqPath, links }) {
 }
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.set("Cache-Control", "no-store");
+  res.json({
+    status: "ok",
+    env: config.env,
+    uptime: Math.round(process.uptime()),
+    service: "portfolio-backend"
+  });
 });
 
 app.use("/api/portfolio", portfolioRoutes);
+app.use("/api/visits", visitRoutes);
 
 app.get("/", (req, res) => {
   const baseUrl = `${req.protocol}://${req.get("host")}`;
@@ -114,8 +132,9 @@ app.get("/", (req, res) => {
     links: [
       { href: `${baseUrl}/api/health`, label: "GET /api/health" },
       { href: `${baseUrl}/api/portfolio`, label: "GET /api/portfolio" },
-      { href: "https://aman-singh-kunwar-portfolio1.onrender.com/", label: "Open client app" },
-      { href: "https://aman-singh-kunwar-portfolio2.onrender.com/", label: "Open admin app" }
+      { href: `${baseUrl}/api/visits`, label: "GET /api/visits" },
+      { href: config.clientUrl, label: "Open client app" },
+      { href: config.adminUrl, label: "Open admin app" }
     ]
   });
   res.status(200).type("html").send(html);
@@ -131,7 +150,7 @@ app.use((req, res) => {
     return res.status(404).json({
       error: "Route not found",
       path: req.originalUrl,
-      availableEndpoints: ["/api/health", "/api/portfolio"]
+      availableEndpoints: ["/api/health", "/api/portfolio", "/api/visits"]
     });
   }
 
@@ -144,19 +163,39 @@ app.use((req, res) => {
     links: [
       { href: `${baseUrl}/`, label: "GET /" },
       { href: `${baseUrl}/api/health`, label: "GET /api/health" },
-      { href: `${baseUrl}/api/portfolio`, label: "GET /api/portfolio" }
+      { href: `${baseUrl}/api/portfolio`, label: "GET /api/portfolio" },
+      { href: `${baseUrl}/api/visits`, label: "GET /api/visits" }
     ]
   });
   return res.status(404).type("html").send(html);
 });
 
-connectAndSeed(mongoUri)
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`API listening on port ${port}`);
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  if (error.message === "Not allowed by CORS") {
+    return res.status(403).json({ error: "CORS origin not allowed" });
+  }
+
+  if (error instanceof SyntaxError && "body" in error) {
+    return res.status(400).json({ error: "Invalid JSON body" });
+  }
+
+  if (!error.statusCode || error.statusCode >= 500) {
+    logger.error("unhandled request error", {
+      message: error.message,
+      stack: isProduction() ? undefined : error.stack
     });
-  })
-  .catch((error) => {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  });
+  } else {
+    logger.warn("request rejected", {
+      message: error.message,
+      details: error.details
+    });
+  }
+
+  return sendError(res, error, !isProduction());
+});
+
+export default app;

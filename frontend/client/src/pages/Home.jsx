@@ -30,7 +30,8 @@ export default function Home({ portfolio, status }) {
     "shree goverdhan saraswati vidya mandir inter college dharampur, dehradun":
       "https://svmdharampur.com/"
   };
-  const getOrganizationUrl = (name) => organizationLinks[name.toLowerCase().trim()];
+  const getOrganizationUrl = (name) =>
+    organizationLinks[(typeof name === "string" ? name : "").toLowerCase().trim()];
   const renderOrganization = (name) => {
     const url = getOrganizationUrl(name);
     if (!url) {

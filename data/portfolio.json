@@ -39,6 +39,53 @@
   },
   "projects": [
     {
+      "name": "ADHYAN.AI",
+      "slug": "adhyan-ai",
+      "description": "AI-powered smart classroom platform.",
+      "highlights": [
+        "Dedicated student and teacher frontends",
+        "Backend service and supporting documentation included",
+        "Live demo hosted online"
+      ],
+      "tech": [
+        "React.js (18)",
+        "Tailwind CSS",
+        "Vite",
+        "Node.js (24)",
+        "Express.js",
+        "MongoDB Atlas",
+        "Gemini-2.5-flash APIs"
+      ],
+      "image": "/images/adhyanai.jpg",
+      "links": {
+        "demo": "https://adhyan-ai.onrender.com/",
+        "repo": "https://github.com/HacktheWinter/ADHYAN.AI"
+      }
+    },
+    {
+      "name": "Portfolio",
+      "slug": "portfolio",
+      "description": "Personal portfolio website to showcase projects, skills, and resume.",
+      "highlights": [
+        "Full stack portfolio with editable admin panel and live data sync",
+        "Responsive UI with dedicated project detail pages",
+        "Reusable data-driven sections for skills, experience, and projects"
+      ],
+      "tech": [
+        "React",
+        "Vite",
+        "Tailwind CSS",
+        "Node.js",
+        "Express",
+        "MongoDB"
+      ],
+      "image": "/images/portfolio.jpg",
+      "links": {
+        "demo": "https://aman-singh-kunwar.github.io/Portfolio/",
+        "repo": "https://github.com/Aman-Singh-Kunwar/Portfolio"
+      }
+    },
+    {
       "name": "EcoCommute",
       "slug": "ecocommute",
       "description": "AI-enabled sustainable transport planner that helps users find eco-friendly and time-efficient routes.",
@@ -87,29 +134,6 @@
       }
     },
     {
-      "name": "Portfolio",
-      "slug": "portfolio",
-      "description": "Personal portfolio website to showcase projects, skills, and resume.",
-      "highlights": [
-        "Full stack portfolio with editable admin panel and live data sync",
-        "Responsive UI with dedicated project detail pages",
-        "Reusable data-driven sections for skills, experience, and projects"
-      ],
-      "tech": [
-        "React",
-        "Vite",
-        "Tailwind CSS",
-        "Node.js",
-        "Express",
-        "MongoDB"
-      ],
-      "image": "/images/portfolio.jpg",
-      "links": {
-        "demo": "https://aman-singh-kunwar.github.io/Portfolio/",
-        "repo": "https://github.com/Aman-Singh-Kunwar/Portfolio"
-      }
-    },
-    {
       "name": "Simon Say Game",
       "slug": "simon-say-game",
       "description": "Interactive Simon Says memory game with enhanced gameplay features.",
@@ -127,30 +151,6 @@
       "links": {
         "demo": "https://aman-singh-kunwar.github.io/Simon-say-game/",
         "repo": "https://github.com/Aman-Singh-Kunwar/Simon-say-game"
-      }
-    },
-    {
-      "name": "ADHYAN.AI",
-      "slug": "adhyan-ai",
-      "description": "AI-powered smart classroom platform.",
-      "highlights": [
-        "Dedicated student and teacher frontends",
-        "Backend service and supporting documentation included",
-        "Live demo hosted online"
-      ],
-      "tech": [
-        "React.js (18)",
-        "Tailwind CSS",
-        "Vite",
-        "Node.js (24)",
-        "Express.js",
-        "MongoDB Atlas",
-        "Gemini-2.5-flash APIs"
-      ],
-      "image": "/images/adhyanai.jpg",
-      "links": {
-        "demo": "https://adhyan-ai.onrender.com/",
-        "repo": "https://github.com/HacktheWinter/ADHYAN.AI"
       }
     }
   ],
@@ -244,7 +244,7 @@
     }
   ],
   "stats": {
-    "achievements": 5,
+    "achievements": 4,
     "projects": 5
   },
   "achievements": [
@@ -253,7 +253,7 @@
       "slug": "hackthewinter-national-level-hackathon",
       "issuer": "GEHU Bhimtal X WeCode",
       "date": "23-01-2026",
-      "summary": "Rank 47 out of 403 team and shortlisted for final round.",
+      "summary": "Rank 47 out of 403 teams and shortlisted for the final round.",
       "description": [
         "Participated in the National Level Hack The Winter 2026 (GEHU Bhimtal + WeCode) with 3 rounds: Online Round 1 (25-30 Dec 2025), Online Round 2 (9-11 Jan 2026), and a 24-hour offline final on 22-23 Jan 2026.",
         "Qualified from 403 teams and secured Rank 47 with team The Code Blooded.",
@@ -277,7 +277,7 @@
       "description": [
         "Secured First Position in the National Level development-based hackathon \"Developathon Surge x DBUU.\"",
         "Competed against 50+ teams in a 24-hour hackathon and reached the final round.",
-        "Built the EcoCommute project focused on sustainable, optimized commuting, and collaborated with Team Code Blodded."
+        "Built the EcoCommute project focused on sustainable, optimized commuting, and collaborated with Team Code Blooded."
       ],
       "link": "https://www.linkedin.com/posts/amansinghkunwar_hackathon-innovation-teamwork-activity-7386762121180508164-HEcx",
       "coverImage": "/images/developathon.jpg",
@@ -293,7 +293,7 @@
       "slug": "debug-arena",
       "issuer": "EVISPHERE TECH",
       "date": "12-10-2025",
-      "summary": "Win the finding bug challenge.",
+      "summary": "Won the bug-finding challenge.",
       "description": [
         "Won the Debug Arena (TechBug Challenge) by Evi Sphere Tech - a no-code UI/UX bug-spotting event.",
         "Online challenge held on 12 Oct 2025 (7-8 PM) with free entry and certificates.",

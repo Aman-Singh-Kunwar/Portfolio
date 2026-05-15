@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { fetchPortfolio } from "./api";
+import { countVisitSession, fetchPortfolio, fetchVisitCount } from "./api";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
 import SeoManager from "./components/SeoManager.jsx";
@@ -9,6 +9,9 @@ import Home from "./pages/Home.jsx";
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
 const AchievementDetail = lazy(() => import("./pages/AchievementDetail.jsx"));
 const PORTFOLIO_CACHE_KEY = "portfolio-cache-v1";
+const VISIT_SESSION_KEY = "portfolio-visit-session-id";
+const VISIT_COUNTED_KEY = "portfolio-visit-counted";
+const VISIT_RETRY_DELAYS = [0, 5000, 15000, 30000, 60000];
 
 const fallbackData = {
   meta: {
@@ -200,7 +203,7 @@ const fallbackData = {
     }
   ],
   stats: {
-    achievements: 5,
+    achievements: 4,
     projects: 5
   },
   achievements: [
@@ -275,15 +278,94 @@ const fallbackData = {
 function getCachedPortfolio() {
   try {
     const raw = localStorage.getItem(PORTFOLIO_CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? normalizePortfolio(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
 }
 
+function asObject(value, fallback = {}) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : fallback;
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function normalizePortfolio(data) {
+  const source = asObject(data, fallbackData);
+  const hero = { ...fallbackData.hero, ...asObject(source.hero) };
+  const basics = { ...fallbackData.basics, ...asObject(source.basics) };
+  const about = { ...fallbackData.about, ...asObject(source.about) };
+  const projects = asArray(source.projects).map((project) => ({
+    ...asObject(project),
+    highlights: asArray(project?.highlights),
+    tech: asArray(project?.tech),
+    links: asObject(project?.links)
+  }));
+  const achievements = asArray(source.achievements).map((achievement) => ({
+    ...asObject(achievement),
+    photos: asArray(achievement?.photos)
+  }));
+
+  return {
+    ...fallbackData,
+    ...source,
+    meta: { ...fallbackData.meta, ...asObject(source.meta) },
+    hero: {
+      ...hero,
+      roles: asArray(hero.roles)
+    },
+    basics: {
+      ...basics,
+      social: asArray(basics.social)
+    },
+    about: {
+      ...about,
+      highlights: asArray(about.highlights)
+    },
+    skills: asArray(source.skills),
+    techStack: asArray(source.techStack),
+    experience: asArray(source.experience).map((item) => ({
+      ...asObject(item),
+      bullets: asArray(item?.bullets)
+    })),
+    education: asArray(source.education),
+    projects,
+    achievements,
+    stats: {
+      ...asObject(source.stats),
+      projects: projects.length,
+      achievements: achievements.length
+    },
+    contact: { ...fallbackData.contact, ...asObject(source.contact) }
+  };
+}
+
+function getVisitSessionId() {
+  const existing = sessionStorage.getItem(VISIT_SESSION_KEY);
+  if (existing) {
+    return existing;
+  }
+
+  const next =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  sessionStorage.setItem(VISIT_SESSION_KEY, next);
+  return next;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
 export default function App() {
-  const [portfolio, setPortfolio] = useState(() => getCachedPortfolio() || fallbackData);
+  const [portfolio, setPortfolio] = useState(() => getCachedPortfolio() || normalizePortfolio(fallbackData));
   const [status, setStatus] = useState(() => (getCachedPortfolio() ? "ready" : "loading"));
+  const [visitCount, setVisitCount] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -291,10 +373,11 @@ export default function App() {
     fetchPortfolio()
       .then((data) => {
         if (active) {
-          setPortfolio(data);
+          const normalized = normalizePortfolio(data);
+          setPortfolio(normalized);
           setStatus("ready");
           try {
-            localStorage.setItem(PORTFOLIO_CACHE_KEY, JSON.stringify(data));
+            localStorage.setItem(PORTFOLIO_CACHE_KEY, JSON.stringify(normalized));
           } catch {
             // Ignore storage failures and continue with in-memory data.
           }
@@ -305,6 +388,45 @@ export default function App() {
           setStatus("offline");
         }
       });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function syncVisitCount() {
+      const alreadyCounted = sessionStorage.getItem(VISIT_COUNTED_KEY) === "true";
+
+      for (const delay of VISIT_RETRY_DELAYS) {
+        if (!active) return;
+
+        if (delay > 0) {
+          await wait(delay);
+          if (!active) return;
+        }
+
+        try {
+          if (alreadyCounted) {
+            const data = await fetchVisitCount({ timeoutMs: 6000 });
+            if (active) setVisitCount(data.count);
+            return;
+          }
+
+          const sessionId = getVisitSessionId();
+          const data = await countVisitSession(sessionId, { timeoutMs: 6000 });
+          sessionStorage.setItem(VISIT_COUNTED_KEY, "true");
+          if (active) setVisitCount(data.count);
+          return;
+        } catch {
+          // Retry quietly. This protects visitor counting from free-host cold starts.
+        }
+      }
+    }
+
+    syncVisitCount();
 
     return () => {
       active = false;
@@ -338,7 +460,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </main>
-        <Footer />
+        <Footer visitCount={visitCount} />
       </div>
     </BrowserRouter>
   );

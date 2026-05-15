@@ -27,7 +27,9 @@ export async function updatePortfolio(apiUrl, token, payload) {
 
   if (!response.ok) {
     const message = await response.json().catch(() => ({ error: "Request failed" }));
-    throw new Error(message.error || "Failed to update portfolio");
+    const error = new Error(message.error || "Failed to update portfolio");
+    error.details = message.details;
+    throw error;
   }
 
   return response.json();
