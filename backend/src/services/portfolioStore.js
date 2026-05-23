@@ -28,17 +28,20 @@ async function writeJsonFile(filePath, data) {
 }
 
 export async function seedPortfolioFromFile() {
+  const forceSeed = process.env.FORCE_SEED === "true";
+  const existing = await Portfolio.findOne().lean();
+  if (existing && !forceSeed) {
+    logger.info("portfolio data already exists in database; skipping seed from file", {
+      projects: existing.data.projects?.length || 0,
+      achievements: existing.data.achievements?.length || 0
+    });
+    return existing.data;
+  }
+
   const fileData = await readJsonFile(dataPath);
 
   if (!fileData) {
-    const existing = await Portfolio.findOne().lean();
-    if (!existing) {
-      throw new Error(`No portfolio data found at ${dataPath}`);
-    }
-    logger.warn("portfolio JSON file not found; using existing database document", {
-      path: dataPath
-    });
-    return existing.data;
+    throw new Error(`No portfolio data found in database and JSON file not found at ${dataPath}`);
   }
 
   const validated = validatePortfolioData(fileData);

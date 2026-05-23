@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 const navLinks = [
@@ -13,6 +13,8 @@ const navLinks = [
 
 export default function Header({ hero, basics }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const avatarSrc = basics?.avatarThumbUrl || "/images/me-avatar.jpg";
   const closeMobile = () => setMobileOpen(false);
   const headerRef = useRef(null);
@@ -70,11 +72,21 @@ export default function Header({ hero, basics }) {
           </div>
         </Link>
         <div className="hidden items-center gap-6 text-sm text-slate-300 lg:flex">
-          {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-white">
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isHash = link.href.startsWith("#");
+            if (isHash && !isHome) {
+              return (
+                <Link key={link.href} to={`/${link.href}`} className="hover:text-white">
+                  {link.label}
+                </Link>
+              );
+            }
+            return (
+              <a key={link.href} href={link.href} className="hover:text-white">
+                {link.label}
+              </a>
+            );
+          })}
         </div>
         <div className="flex items-center gap-3">
           <a href={basics?.resumeUrl || "/cv.pdf"} className="btn-secondary">
@@ -110,16 +122,31 @@ export default function Header({ hero, basics }) {
       {mobileOpen && (
         <div className="lg:hidden border-t border-white/5 bg-slate-950/95 backdrop-blur">
           <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-sm text-slate-300 sm:px-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-white"
-                onClick={closeMobile}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isHash = link.href.startsWith("#");
+              if (isHash && !isHome) {
+                return (
+                  <Link
+                    key={link.href}
+                    to={`/${link.href}`}
+                    className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-white"
+                    onClick={closeMobile}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-white"
+                  onClick={closeMobile}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </div>
         </div>
       )}

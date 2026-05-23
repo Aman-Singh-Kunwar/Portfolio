@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaJava, FaGithub, FaLinkedin } from "react-icons/fa6";
 import {
@@ -18,6 +18,7 @@ export default function Home({ portfolio, status }) {
   const { hero, basics, about, skills, techStack, experience, education, projects, achievements } =
     portfolio;
   const navigate = useNavigate();
+  const location = useLocation();
   const [showDesktopPhoto, setShowDesktopPhoto] = useState(() => {
     if (typeof window === "undefined") return true;
     return window.matchMedia("(min-width: 768px)").matches;
@@ -178,6 +179,19 @@ export default function Home({ portfolio, status }) {
     mediaQuery.addListener(update);
     return () => mediaQuery.removeListener(update);
   }, []);
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.substring(1);
+      const element = document.getElementById(id);
+      if (element) {
+        const timeoutId = setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [location]);
 
   return (
     <>
