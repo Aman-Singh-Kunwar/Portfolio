@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const getSlug = (project) =>
   project.slug || project.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -8,13 +8,26 @@ export default function ProjectDetail({ portfolio }) {
   const { slug } = useParams();
   const projects = portfolio.projects || [];
   const project = projects.find((item) => getSlug(item) === slug);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
   const setProjectFallbackImage = (event) => {
     event.currentTarget.onerror = null;
     event.currentTarget.src = "/images/portfolio.jpg";
   };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [slug]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+    };
+    if (isLightboxOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isLightboxOpen]);
   const techLinks = {
     javascript: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
     react: "https://react.dev/",
@@ -24,6 +37,15 @@ export default function ProjectDetail({ portfolio }) {
     node: "https://nodejs.org/",
     mongodb: "https://www.mongodb.com/",
     "mongodb atlas": "https://www.mongodb.com/atlas",
+    php: "https://www.php.net/",
+    mysql: "https://www.mysql.com/",
+    "mysql (phpmyadmin)": "https://www.mysql.com/",
+    wordpress: "https://wordpress.org/",
+    bootstrap: "https://getbootstrap.com/",
+    "apache / xampp": "https://httpd.apache.org/",
+    apache: "https://httpd.apache.org/",
+    xampp: "https://www.apachefriends.org/",
+    "icici payment gateway": "https://www.icicibank.com/",
     "tailwind css": "https://tailwindcss.com/",
     tailwind: "https://tailwindcss.com/",
     python: "https://www.python.org/",
@@ -40,7 +62,10 @@ export default function ProjectDetail({ portfolio }) {
     flask: "https://flask.palletsprojects.com/",
     leaflet: "https://leafletjs.com/",
     html: "https://developer.mozilla.org/en-US/docs/Web/HTML",
+    html5: "https://developer.mozilla.org/en-US/docs/Web/HTML",
+    "html5 & css3": "https://developer.mozilla.org/en-US/docs/Web/HTML",
     css: "https://developer.mozilla.org/en-US/docs/Web/CSS",
+    css3: "https://developer.mozilla.org/en-US/docs/Web/CSS",
     git: "https://git-scm.com/",
     github: "https://github.com/",
     "gemini-2.5-flash apis": "https://ai.google.dev/"
@@ -105,7 +130,11 @@ export default function ProjectDetail({ portfolio }) {
 
         <div className="card card-3d overflow-hidden">
           {(project.image || projectImage) && (
-            <a href={projectImage} target="_blank" rel="noreferrer" className="block image-frame">
+            <div
+              className="block image-frame cursor-zoom-in relative group"
+              onClick={() => setIsLightboxOpen(true)}
+              title="Click to view full screen"
+            >
               <img
                 src={projectImage}
                 alt={project.name}
@@ -114,9 +143,12 @@ export default function ProjectDetail({ portfolio }) {
                 loading="eager"
                 decoding="async"
                 onError={setProjectFallbackImage}
-                className="max-h-[70vh] w-full bg-slate-950/40 object-contain"
+                className="max-h-[70vh] w-full bg-slate-950/40 object-contain transition group-hover:scale-[1.01]"
               />
-            </a>
+              <span className="absolute bottom-4 right-4 rounded-full bg-slate-950/80 border border-white/10 px-3 py-1 text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition">
+                🔍 Click to Expand
+              </span>
+            </div>
           )}
           <div className="p-8">
             <h1 className="text-3xl font-semibold">{project.name}</h1>
@@ -162,6 +194,31 @@ export default function ProjectDetail({ portfolio }) {
           </div>
         </div>
       </div>
+
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setIsLightboxOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl border border-white/20 bg-slate-900 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-4 right-4 z-10 grid h-9 w-9 place-items-center rounded-full bg-slate-950/80 border border-white/20 text-white hover:bg-white/20 transition"
+              aria-label="Close image lightbox"
+            >
+              ✕
+            </button>
+            <img
+              src={projectImage}
+              alt={project.name}
+              className="max-h-[85vh] max-w-[85vw] object-contain"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

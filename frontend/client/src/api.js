@@ -71,3 +71,31 @@ export async function countVisitSession(sessionId, { timeoutMs = 3000 } = {}) {
     clearTimeout(timeoutId);
   }
 }
+
+export async function sendContactMessage(payload, { timeoutMs = 6000 } = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(`${API_URL}/api/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+
+    const data = await response.json().catch(() => ({ error: "Request failed" }));
+
+    if (!response.ok) {
+      const error = new Error(data.error || "Failed to send message");
+      error.details = data.details;
+      throw error;
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}

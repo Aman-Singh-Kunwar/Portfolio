@@ -119,4 +119,12 @@ a {
       0 12px 30px rgba(14, 165, 233, 0.15),
       0 18px 50px rgba(245, 158, 11, 0.15);
   }
+
+  .input {
+    @apply rounded-xl border border-white/15 bg-slate-900/80 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 backdrop-blur-md transition duration-200 outline-none;
+  }
+
+  .input:focus {
+    @apply border-amber-400/80 bg-slate-900/95 ring-1 ring-amber-400/40;
+  }
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchPortfolio, getApiUrl, updatePortfolio } from "./api";
+import { fetchPortfolio, getApiUrl, updatePortfolio, fetchMessages, deleteMessage } from "./api";
 
 const template = {
   meta: {
@@ -12,7 +12,8 @@ const template = {
     roles: ["Full Stack Developer"],
     tagline: "Short professional tagline.",
     ctaPrimary: "View Projects",
-    ctaSecondary: "Download Resume"
+    ctaSecondary: "Download Resume",
+    image: "/images/me.jpg"
   },
   basics: {
     role: "Full Stack Developer",
@@ -52,6 +53,10 @@ export default function App() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState("offline");
   const [previewStatus, setPreviewStatus] = useState("idle");
+
+  const [adminTab, setAdminTab] = useState("json"); // "json" | "form" | "messages"
+  const [messagesList, setMessagesList] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -77,6 +82,42 @@ export default function App() {
   const isValidJson = parsedJson.valid;
   const previewData = parsedJson.data;
   const fallbackPreview = previewData || template;
+
+  const updateFormField = (section, field, value) => {
+    if (!isValidJson || !previewData) return;
+    const updated = structuredClone(previewData);
+    if (!updated[section]) updated[section] = {};
+    updated[section][field] = value;
+    setJsonText(JSON.stringify(updated, null, 2));
+  };
+
+  const loadRecruiterMessages = useCallback(async () => {
+    if (!token.trim()) {
+      setMessage("Admin token is required to view recruiter messages.");
+      return;
+    }
+    setLoadingMessages(true);
+    try {
+      const data = await fetchMessages(apiUrl, token);
+      setMessagesList(data);
+      setMessage(`Loaded ${data.length} recruiter message(s).`);
+    } catch (err) {
+      setMessage(err.message || "Failed to load messages.");
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, [apiUrl, token]);
+
+  const handleDeleteRecruiterMessage = async (id) => {
+    if (!window.confirm("Delete this recruiter message permanently?")) return;
+    try {
+      await deleteMessage(apiUrl, token, id);
+      setMessagesList((prev) => prev.filter((m) => m._id !== id));
+      setMessage("Message deleted.");
+    } catch (err) {
+      setMessage(err.message || "Failed to delete message.");
+    }
+  };
 
   const checkClientStatus = useCallback(async () => {
     if (!clientUrl) {
@@ -227,9 +268,7 @@ export default function App() {
 
   const handleUpload = async (event) => {
     const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     try {
       const text = await file.text();
@@ -274,8 +313,7 @@ export default function App() {
               <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Admin</p>
               <h1 className="mt-2 text-3xl font-semibold">Portfolio Control Center</h1>
               <p className="mt-3 text-sm text-slate-300">
-                Load live data, edit it safely, and publish updates. This panel works with the
-                schema from `data/portfolio.json`.
+                Load live data, edit visually or via JSON, view recruiter messages, and publish updates.
               </p>
             </div>
             <div className="badge">
@@ -335,32 +373,14 @@ export default function App() {
                       title={showToken ? "Hide admin token" : "Show admin token"}
                     >
                       {showToken ? (
-                        <svg
-                          aria-hidden="true"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
+                        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="m2 2 20 20" />
                           <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
                           <path d="M9.9 4.2A10.5 10.5 0 0 1 12 4c5 0 8.5 4 10 8a13.5 13.5 0 0 1-3 4.5" />
                           <path d="M6.4 6.4A13.5 13.5 0 0 0 2 12c1.5 4 5 8 10 8a10.5 10.5 0 0 0 4.1-.8" />
                         </svg>
                       ) : (
-                        <svg
-                          aria-hidden="true"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
+                        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
                           <circle cx="12" cy="12" r="3" />
                         </svg>
@@ -426,40 +446,213 @@ export default function App() {
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Tips</p>
                   <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-300">
-                    <li>Keep the JSON valid before saving.</li>
-                    <li>Use unique project `slug` values for clean URLs.</li>
-                    <li>Save updates after editing and refresh the client.</li>
+                    <li>Switch between JSON Mode, Form Editor, and Recruiter Messages above.</li>
+                    <li>Keep unique project `slug` values for clean URLs.</li>
+                    <li>Save updates after editing to sync with live MongoDB database.</li>
                   </ul>
                 </div>
               </div>
             </div>
 
             <div className="card p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <label htmlFor="portfolio-json-editor" className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                    Portfolio JSON
-                  </label>
-                  <p className="text-xs text-slate-400">Edit with care and keep the structure intact.</p>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-950/60 p-1 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setAdminTab("json")}
+                    className={`rounded-lg px-3 py-1.5 transition ${adminTab === "json" ? "bg-amber-400 text-slate-950 font-semibold" : "text-slate-300 hover:text-white"}`}
+                  >
+                    JSON Code
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdminTab("form")}
+                    className={`rounded-lg px-3 py-1.5 transition ${adminTab === "form" ? "bg-amber-400 text-slate-950 font-semibold" : "text-slate-300 hover:text-white"}`}
+                  >
+                    Form Editor
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdminTab("messages");
+                      loadRecruiterMessages();
+                    }}
+                    className={`rounded-lg px-3 py-1.5 transition ${adminTab === "messages" ? "bg-amber-400 text-slate-950 font-semibold" : "text-slate-300 hover:text-white"}`}
+                  >
+                    Recruiter Messages {messagesList.length > 0 && `(${messagesList.length})`}
+                  </button>
                 </div>
+
                 <div className="badge">
-                  <span className="text-slate-400">JSON</span>
+                  <span className="text-slate-400">JSON Status</span>
                   <span className={isValidJson ? "text-emerald-200" : "text-rose-200"}>
                     {isValidJson ? "Valid" : "Invalid"}
                   </span>
                 </div>
               </div>
-              <textarea
-                id="portfolio-json-editor"
-                className="mt-4 h-[520px] w-full rounded-xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-200 focus:border-amber-300 focus:outline-none"
-                value={jsonText}
-                onChange={(event) => setJsonText(event.target.value)}
-              />
 
-              {!isValidJson && (
-                <p className="mt-4 text-xs text-rose-200">
-                  JSON is invalid. Fix errors before saving or previewing the client.
-                </p>
+              {adminTab === "json" && (
+                <div className="mt-4">
+                  <textarea
+                    id="portfolio-json-editor"
+                    className="h-[520px] w-full rounded-xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-200 focus:border-amber-300 focus:outline-none"
+                    value={jsonText}
+                    onChange={(event) => setJsonText(event.target.value)}
+                  />
+                  {!isValidJson && (
+                    <p className="mt-4 text-xs text-rose-200">
+                      JSON is invalid. Fix errors before saving or switching to Form mode.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {adminTab === "form" && (
+                <div className="mt-4 h-[520px] overflow-y-auto space-y-6 pr-2">
+                  {!isValidJson ? (
+                    <p className="text-xs text-rose-200">
+                      Form Editor requires valid JSON. Please fix JSON syntax errors first.
+                    </p>
+                  ) : (
+                    <>
+                      <div className="card p-4 space-y-3 bg-slate-950/40">
+                        <p className="text-xs uppercase tracking-wider text-amber-300">Hero Section</p>
+                        <div className="grid gap-3 sm:grid-cols-2 text-xs">
+                          <div>
+                            <label className="text-slate-400">Greeting</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.hero?.greeting || ""}
+                              onChange={(e) => updateFormField("hero", "greeting", e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-slate-400">Name</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.hero?.name || ""}
+                              onChange={(e) => updateFormField("hero", "name", e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-400">Tagline</label>
+                          <input
+                            className="input mt-1 w-full text-xs"
+                            value={previewData.hero?.tagline || ""}
+                            onChange={(e) => updateFormField("hero", "tagline", e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="card p-4 space-y-3 bg-slate-950/40">
+                        <p className="text-xs uppercase tracking-wider text-amber-300">Basics & Contact</p>
+                        <div className="grid gap-3 sm:grid-cols-2 text-xs">
+                          <div>
+                            <label className="text-slate-400">Role</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.basics?.role || ""}
+                              onChange={(e) => updateFormField("basics", "role", e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-slate-400">Location</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.basics?.location || ""}
+                              onChange={(e) => updateFormField("basics", "location", e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-slate-400">Email</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.basics?.email || ""}
+                              onChange={(e) => updateFormField("basics", "email", e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-slate-400">Phone</label>
+                            <input
+                              className="input mt-1 w-full"
+                              value={previewData.basics?.phone || ""}
+                              onChange={(e) => updateFormField("basics", "phone", e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-400">Availability</label>
+                          <input
+                            className="input mt-1 w-full text-xs"
+                            value={previewData.basics?.availability || ""}
+                            onChange={(e) => updateFormField("basics", "availability", e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="card p-4 space-y-3 bg-slate-950/40">
+                        <p className="text-xs uppercase tracking-wider text-amber-300">About Summary</p>
+                        <textarea
+                          className="input w-full text-xs h-24 font-sans"
+                          value={previewData.about?.summary || ""}
+                          onChange={(e) => updateFormField("about", "summary", e.target.value)}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {adminTab === "messages" && (
+                <div className="mt-4 h-[520px] overflow-y-auto space-y-4 pr-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-wider text-slate-400">
+                      Recruiter Contact Submissions
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-secondary text-xs px-3 py-1"
+                      onClick={loadRecruiterMessages}
+                      disabled={loadingMessages}
+                    >
+                      {loadingMessages ? "Refreshing..." : "Refresh Messages"}
+                    </button>
+                  </div>
+
+                  {messagesList.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-white/10 p-10 text-center text-xs text-slate-400">
+                      No recruiter messages received yet. Messages sent via the `#hire-me` contact form will display here.
+                    </div>
+                  ) : (
+                    messagesList.map((m) => (
+                      <div key={m._id} className="card p-4 space-y-2 border border-white/10 bg-slate-950/50">
+                        <div className="flex items-start justify-between gap-2 text-xs">
+                          <div>
+                            <span className="font-semibold text-slate-100">{m.name}</span>
+                            <span className="text-slate-400 ml-2">&lt;{m.email}&gt;</span>
+                          </div>
+                          <span className="text-[11px] text-slate-400">
+                            {new Date(m.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-amber-300">{m.subject}</p>
+                        <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                          {m.message}
+                        </p>
+                        <div className="pt-2 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteRecruiterMessage(m._id)}
+                            className="text-xs text-rose-300 hover:text-rose-200 underline"
+                          >
+                            Delete Message
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               )}
 
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -523,75 +716,6 @@ export default function App() {
                         <span key={role} className="badge">
                           {role}
                         </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-4 md:grid-cols-2">
-                    <div className="card p-5">
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Basics</p>
-                      <div className="mt-3 space-y-2 text-sm text-slate-300">
-                        <p>{fallbackPreview.basics?.role || "Role"}</p>
-                        <p>{fallbackPreview.basics?.location || "Location"}</p>
-                        <p>{fallbackPreview.basics?.email || "Email"}</p>
-                      </div>
-                    </div>
-                    <div className="card p-5">
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Stats</p>
-                      <div className="mt-3 space-y-2 text-sm text-slate-300">
-                        <p>
-                          Projects:{" "}
-                          {fallbackPreview.stats?.projects ??
-                            (fallbackPreview.projects || []).length}
-                        </p>
-                        <p>Achievements: {fallbackPreview.stats?.achievements ?? 0}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 card p-6">
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                      Tech Stack
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(fallbackPreview.techStack || []).map((tech) => (
-                        <span key={tech} className="badge">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 card p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                          Projects
-                        </p>
-                        <h3 className="mt-2 text-lg font-semibold">Project preview</h3>
-                      </div>
-                      <span className="badge">
-                        {(fallbackPreview.projects || []).length} total
-                      </span>
-                    </div>
-                    <div className="mt-4 grid gap-4 md:grid-cols-2">
-                      {(fallbackPreview.projects || []).map((project) => (
-                        <div
-                          key={project.slug || project.name}
-                          className="rounded-xl border border-white/10 bg-white/5 p-4"
-                        >
-                          <p className="text-sm font-semibold">{project.name}</p>
-                          <p className="mt-2 text-xs text-slate-300">
-                            {project.description || "Add a short description."}
-                          </p>
-                          <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-300">
-                            {(project.tech || []).slice(0, 4).map((tech) => (
-                              <span key={tech} className="badge">
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
                       ))}
                     </div>
                   </div>

@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n \"backend,client,admin\" -c \"cyan,magenta,yellow\" \"npm --prefix backend run dev\" \"npm --prefix frontend/client run dev\" \"npm --prefix frontend/admin run dev\"",
+    "check": "npm --prefix backend run check"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

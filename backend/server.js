@@ -15,10 +15,14 @@ let server;
 
 function shutdown(signal) {
   logger.info("shutdown signal received", { signal });
-  server?.close(async () => {
-    await disconnectDatabase();
-    process.exit(0);
-  });
+  if (server) {
+    server.close(async () => {
+      await disconnectDatabase();
+      process.exit(0);
+    });
+  } else {
+    disconnectDatabase().then(() => process.exit(0));
+  }
 }
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));

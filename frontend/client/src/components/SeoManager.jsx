@@ -35,8 +35,11 @@ function setLink(rel, href) {
 }
 
 function setJsonLd(id, payload) {
-  if (!payload) return;
   let script = document.getElementById(id);
+  if (!payload) {
+    if (script) script.remove();
+    return;
+  }
   if (!script) {
     script = document.createElement("script");
     script.id = id;
@@ -61,6 +64,10 @@ export default function SeoManager({ portfolio }) {
     const canonicalUrl = new URL(path, siteUrl).toString();
     const projects = portfolio.projects || [];
     const achievements = portfolio.achievements || [];
+    const skills = (portfolio.skills || []).map((s) => s.name);
+    const techStack = portfolio.techStack || [];
+    const allSkills = Array.from(new Set([...skills, ...techStack]));
+
     const project = projects.find((item) => `/projects/${getProjectSlug(item)}` === path);
     const achievement = achievements.find((item) => `/achievements/${getAchievementSlug(item)}` === path);
 
@@ -70,19 +77,39 @@ export default function SeoManager({ portfolio }) {
         : achievement?.title
           ? `${achievement.title} | Aman Singh Kunwar`
           : portfolio.meta?.title || DEFAULT_TITLE;
+
     const description =
       project?.description ||
       achievement?.summary ||
       portfolio.meta?.description ||
       DEFAULT_DESCRIPTION;
+
     const socialImage = toAbsoluteUrl(
       project?.image || achievement?.coverImage || portfolio.hero?.image || DEFAULT_IMAGE,
       siteUrl
     );
 
+    const keywords = [
+      "Aman Singh Kunwar",
+      "Aman Singh Kunwar portfolio",
+      "Full Stack Developer Dehradun",
+      "MERN Stack Engineer",
+      "React Developer",
+      "PHP Developer",
+      "WordPress Developer",
+      "MySQL Developer",
+      "Node.js Developer",
+      "Software Engineer Uttarakhand",
+      "Evon Technologies intern",
+      ...allSkills,
+      ...projects.map((p) => p.name)
+    ].join(", ");
+
     document.title = title;
     setLink("canonical", canonicalUrl);
     setMeta("name", "description", description);
+    setMeta("name", "keywords", keywords);
+    setMeta("name", "author", portfolio.hero?.name || "Aman Singh Kunwar");
     setMeta("name", "robots", "index,follow,max-image-preview:large");
     setMeta("property", "og:type", project || achievement ? "article" : "website");
     setMeta("property", "og:site_name", "Aman Singh Kunwar Portfolio");
@@ -102,9 +129,27 @@ export default function SeoManager({ portfolio }) {
       jobTitle: portfolio.basics?.role || "Full Stack Developer",
       email: portfolio.basics?.email || undefined,
       telephone: portfolio.basics?.phone || undefined,
-      address: portfolio.basics?.location || undefined,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Dehradun",
+        addressRegion: "Uttarakhand",
+        addressCountry: "India"
+      },
       image: toAbsoluteUrl(portfolio.hero?.image || DEFAULT_IMAGE, siteUrl),
       url: siteUrl,
+      knowsAbout: allSkills,
+      alumniOf: {
+        "@type": "EducationalOrganization",
+        name: "Dev Bhoomi Uttarakhand University, Dehradun"
+      },
+      hasOccupation: {
+        "@type": "Occupation",
+        name: "Web Development Intern",
+        occupationLocation: {
+          "@type": "City",
+          name: "Dehradun, Uttarakhand"
+        }
+      },
       sameAs: (portfolio.basics?.social || []).map((item) => item.url).filter(Boolean)
     };
 
@@ -112,11 +157,70 @@ export default function SeoManager({ portfolio }) {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "Aman Singh Kunwar Portfolio",
-      url: siteUrl
+      url: siteUrl,
+      author: {
+        "@type": "Person",
+        name: "Aman Singh Kunwar"
+      }
     };
 
     setJsonLd("jsonld-person", personJsonLd);
     setJsonLd("jsonld-website", websiteJsonLd);
+
+    if (project) {
+      const projectJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        name: project.name,
+        description: project.description,
+        programmingLanguage: project.tech || [],
+        codeRepository: project.links?.repo || undefined,
+        targetProduct: project.links?.demo
+          ? {
+              "@type": "SoftwareApplication",
+              name: project.name,
+              url: project.links.demo
+            }
+          : undefined,
+        author: {
+          "@type": "Person",
+          name: "Aman Singh Kunwar"
+        }
+      };
+      setJsonLd("jsonld-project", projectJsonLd);
+    } else {
+      setJsonLd("jsonld-project", null);
+    }
+
+    if (project || achievement) {
+      const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteUrl
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: project ? "Projects" : "Achievements",
+            item: `${siteUrl}#${project ? "projects" : "achievements"}`
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project ? project.name : achievement.title,
+            item: canonicalUrl
+          }
+        ]
+      };
+      setJsonLd("jsonld-breadcrumb", breadcrumbJsonLd);
+    } else {
+      setJsonLd("jsonld-breadcrumb", null);
+    }
   }, [location.pathname, portfolio]);
 
   return null;

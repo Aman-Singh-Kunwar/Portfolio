@@ -34,3 +34,34 @@ export async function updatePortfolio(apiUrl, token, payload) {
 
   return response.json();
 }
+
+export async function fetchMessages(apiUrl, token) {
+  const response = await fetch(`${apiUrl}/api/contact`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const message = await response.json().catch(() => ({ error: "Request failed" }));
+    throw new Error(message.error || "Failed to fetch recruiter messages");
+  }
+
+  return response.json();
+}
+
+export async function deleteMessage(apiUrl, token, id) {
+  const response = await fetch(`${apiUrl}/api/contact/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const message = await response.json().catch(() => ({ error: "Request failed" }));
+    throw new Error(message.error || "Failed to delete message");
+  }
+
+  return response.json();
+}

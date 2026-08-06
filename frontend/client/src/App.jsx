@@ -96,7 +96,7 @@ const fallbackData = {
       ],
       "image": "/images/portfolio.jpg",
       "links": {
-        "demo": "https://aman-singh-kunwar.github.io/Portfolio/",
+        "demo": "https://aman-singh-kunwar-portfolio1.onrender.com/",
         "repo": "https://github.com/Aman-Singh-Kunwar/Portfolio"
       }
     },
@@ -172,7 +172,7 @@ const fallbackData = {
   "about": {
     "summary": "Computer Science student focused on building modern full stack applications. I enjoy creating fast, accessible UIs backed by clean APIs and well structured data models.",
     "highlights": [
-      "Hands on experience with React, Node.js, Express, and MongoDB",
+      "Hands-on experience with React, Node.js, PHP, MySQL, WordPress, and MongoDB",
       "Strong foundation in algorithms, data structures, and system design",
       "Interested in cloud certifications and scalable architecture"
     ]
@@ -180,31 +180,53 @@ const fallbackData = {
   "skills": [
     {
       "name": "React",
-      "level": 90
+      "level": 90,
+      "category": "Frontend"
     },
     {
       "name": "Node.js",
-      "level": 85
+      "level": 85,
+      "category": "Backend & DB"
     },
     {
       "name": "MongoDB",
-      "level": 80
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "PHP",
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "MySQL",
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "WordPress",
+      "level": 85,
+      "category": "CMS & Core"
     },
     {
       "name": "JavaScript",
-      "level": 90
+      "level": 75,
+      "category": "Frontend"
     },
     {
       "name": "Tailwind CSS",
-      "level": 85
+      "level": 85,
+      "category": "Frontend"
     },
     {
       "name": "Python",
-      "level": 80
+      "level": 80,
+      "category": "CMS & Core"
     },
     {
       "name": "Java",
-      "level": 75
+      "level": 75,
+      "category": "CMS & Core"
     }
   ],
   "techStack": [
@@ -212,12 +234,28 @@ const fallbackData = {
     "React",
     "MongoDB",
     "Express",
+    "PHP",
+    "MySQL",
+    "WordPress",
     "Tailwind CSS",
     "Vite",
     "Mongoose",
     "GitHub"
   ],
   "experience": [
+    {
+      "title": "Web Development Intern",
+      "company": "Evon Technologies",
+      "location": "Dehradun, Uttarakhand",
+      "start": "June 2026",
+      "end": "August 2026",
+      "bullets": [
+        "Contributed to full stack development for live government and client web platforms, including USAME",
+        "Built responsive UI components, customized WordPress themes, and integrated secure payment processing.",
+        "Performed end-to-end UI testing, QA, bug fixing, and collaborated with senior developers on deployment updates."
+      ],
+      "tech": ["React", "PHP", "WordPress", "MySQL"]
+    },
     {
       "title": "Social Internship",
       "company": "Aasraa Trust",
@@ -228,18 +266,8 @@ const fallbackData = {
         "Volunteer educator and mentor for Class 11 and 12 students",
         "Collaborated with teachers to build a positive learning environment",
         "Provided one on one guidance for study plans and career goals"
-      ]
-    },
-    {
-      "title": "Looking for Internship",
-      "company": "Open to opportunities",
-      "location": "Remote or On site",
-      "start": "Present",
-      "end": "",
-      "bullets": [
-        "Available for MERN stack development roles",
-        "Interested in product teams focused on real world impact"
-      ]
+      ],
+      "tech": ["Teaching", "Mentorship", "Chemistry"]
     }
   ],
   "education": [
@@ -248,18 +276,25 @@ const fallbackData = {
       "institution": "Dev Bhoomi Uttarakhand University, Dehradun",
       "start": "2024",
       "end": "2028",
-      "grade": "CGPA: 9.22 (First class distinction)"
+      "grade": "CGPA: 9.29"
     },
     {
-      "degree": "Higher Secondary School",
+      "degree": "Higher Secondary School (12th Board)",
       "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
       "start": "2022",
       "end": "2023",
-      "grade": "Percentage: 93.6 (18th Rank in Uttarakhand Board)"
+      "grade": "Percentage: 93.6 (18th Rank in State Board)"
+    },
+    {
+      "degree": "High School (10th Board)",
+      "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
+      "start": "2020",
+      "end": "2021",
+      "grade": "Percentage: 96.2"
     }
   ],
   "stats": {
-    "achievements": 4,
+    "achievements": 5,
     "projects": 5
   },
   "achievements": [
@@ -318,6 +353,27 @@ const fallbackData = {
       "coverImage": "/images/debuging.jpg",
       "photos": [
         "/images/debuging.jpg"
+      ]
+    },
+    {
+      "title": "Web Development Internship - Evon Technologies",
+      "slug": "evon-technologies-web-development-internship",
+      "issuer": "EVON TECHNOLOGIES",
+      "date": "August 2026",
+      "summary": "Web Development Internship completion certificate at Evon Technologies.",
+      "description": [
+        "Contributed to front-end and back-end development for live government and client web platforms.",
+        "Developed responsive UI components and implemented feature enhancements across both client-facing site and admin panel.",
+        "Customized WordPress themes and plugins to meet project requirements.",
+        "Integrated the ICICI Bank Payment Gateway for secure online payment processing.",
+        "Performed UI testing, bug fixing, quality assurance, and cross-browser compatibility testing.",
+        "Collaborated with senior developers to implement new features, resolve issues, and deploy project updates.",
+        "Contributed to the development and maintenance of the Uttarakhand State Authority for Minority Education (USAME) website: https://usame.uk.gov.in/"
+      ],
+      "link": "https://usame.uk.gov.in/",
+      "coverImage": "/images/web development internship certificate.jpeg",
+      "photos": [
+        "/images/web development internship certificate.jpeg"
       ]
     },
     {

@@ -12,6 +12,7 @@ export default function AchievementDetail({ portfolio }) {
     [achievements, slug]
   );
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -20,6 +21,17 @@ export default function AchievementDetail({ portfolio }) {
   useEffect(() => {
     setActiveIndex(0);
   }, [achievement?.title]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+    };
+    if (isLightboxOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isLightboxOpen]);
+
   const setAchievementFallbackImage = (event) => {
     event.currentTarget.onerror = null;
     event.currentTarget.src = "/images/hackthewinter.jpg";
@@ -109,7 +121,11 @@ export default function AchievementDetail({ portfolio }) {
             </div>
 
             {currentPhoto ? (
-              <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
+              <div
+                className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 cursor-zoom-in relative group"
+                onClick={() => setIsLightboxOpen(true)}
+                title="Click to view full screen"
+              >
                 <img
                   src={currentPhoto}
                   alt={achievement.title}
@@ -118,8 +134,11 @@ export default function AchievementDetail({ portfolio }) {
                   loading="eager"
                   decoding="async"
                   onError={setAchievementFallbackImage}
-                  className="w-full h-auto object-contain"
+                  className="w-full h-auto object-contain transition group-hover:scale-[1.01]"
                 />
+                <span className="absolute bottom-4 right-4 rounded-full bg-slate-950/80 border border-white/10 px-3 py-1 text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition">
+                  🔍 Click to Expand
+                </span>
               </div>
             ) : (
               <div className="mt-4 rounded-2xl border border-dashed border-white/15 bg-slate-950/40 p-10 text-center text-sm text-slate-400">
@@ -156,6 +175,31 @@ export default function AchievementDetail({ portfolio }) {
           </div>
         </div>
       </div>
+
+      {isLightboxOpen && currentPhoto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setIsLightboxOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl border border-white/20 bg-slate-900 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-4 right-4 z-10 grid h-9 w-9 place-items-center rounded-full bg-slate-950/80 border border-white/20 text-white hover:bg-white/20 transition"
+              aria-label="Close image lightbox"
+            >
+              ✕
+            </button>
+            <img
+              src={currentPhoto}
+              alt={achievement.title}
+              className="max-h-[85vh] max-w-[85vw] object-contain"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -3,6 +3,8 @@ import cors from "cors";
 import compression from "compression";
 import portfolioRoutes from "./routes/portfolio.js";
 import visitRoutes from "./routes/visits.js";
+import contactRoutes from "./routes/contact.js";
+import { getPortfolio } from "./services/portfolioStore.js";
 import { config, isProduction } from "./config.js";
 import { createRateLimiter } from "./middleware/rateLimit.js";
 import { requestLogger } from "./middleware/requestLogger.js";
@@ -120,6 +122,75 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/visits", visitRoutes);
+app.use("/api/contact", contactRoutes);
+
+app.get("/sitemap.xml", async (req, res) => {
+  const siteUrl = config.clientUrl.replace(/\/$/, "");
+  const now = new Date().toISOString();
+  let projects = [];
+  let achievements = [];
+
+  try {
+    const portfolio = await getPortfolio();
+    projects = portfolio.projects || [];
+    achievements = portfolio.achievements || [];
+  } catch {
+    // Fallback if data is not loaded
+  }
+
+  const projectUrls = projects
+    .map((p) => {
+      const slug = p.slug || p.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      return `  <url>
+    <loc>${siteUrl}/projects/${slug}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    })
+    .join("\n");
+
+  const achievementUrls = achievements
+    .map((a) => {
+      const slug = a.slug || a.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      return `  <url>
+    <loc>${siteUrl}/achievements/${slug}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+    })
+    .join("\n");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${siteUrl}/</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+${projectUrls}
+${achievementUrls}
+</urlset>`;
+
+  res.set("Content-Type", "application/xml");
+  res.set("Cache-Control", "public, max-age=3600");
+  return res.status(200).send(xml);
+});
+
+app.get("/robots.txt", (req, res) => {
+  const siteUrl = config.clientUrl.replace(/\/$/, "");
+  const robots = `User-agent: *
+Allow: /
+
+Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${req.protocol}://${req.get("host")}/sitemap.xml
+`;
+  res.set("Content-Type", "text/plain");
+  res.set("Cache-Control", "public, max-age=86400");
+  return res.status(200).send(robots);
+});
 
 app.get("/", (req, res) => {
   const baseUrl = `${req.protocol}://${req.get("host")}`;
@@ -150,7 +221,7 @@ app.use((req, res) => {
     return res.status(404).json({
       error: "Route not found",
       path: req.originalUrl,
-      availableEndpoints: ["/api/health", "/api/portfolio", "/api/visits"]
+      availableEndpoints: ["/api/health", "/api/portfolio", "/api/visits", "/api/contact", "/sitemap.xml", "/robots.txt"]
     });
   }
 
