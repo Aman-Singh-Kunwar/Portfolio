@@ -1,61 +1,85 @@
-# Full Stack Portfolio (MERN)
+# 🚀 Aman Singh Kunwar — Personal Portfolio & Admin Control Center
 
-Clean, responsive portfolio with a public client, an admin editor, and a Node/Express API backed by MongoDB. Portfolio content lives in `data/portfolio.json` and is synced into MongoDB by the backend.
+A modern, high-performance, full-stack Developer Portfolio and Admin Control System built with **React 18, Node.js/Express, MongoDB, PHP, MySQL, WordPress, and Tailwind CSS**. Features a dynamic public client site, interactive skill metrics, career timeline tree, lightbox galleries, recruiter contact inbox, and a secure admin control center.
 
-## Overview
+---
 
-- **Purpose:** Showcase projects, skills, experience, education, and achievements.
-- **Client:** Public portfolio site built with React, Vite, and Tailwind CSS.
-- **Admin:** Internal JSON editor for portfolio content.
-- **Backend:** Express API with MongoDB, admin-token protection, validation, security headers, rate limiting, and structured logging.
-- **Database:** MongoDB via Mongoose.
+## 🔗 Live Links
 
-## Project Architecture
+- **🌐 Live Portfolio Application**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
+- **🐙 GitHub Repository**: [https://github.com/Aman-Singh-Kunwar/Portfolio](https://github.com/Aman-Singh-Kunwar/Portfolio)
+- **🏛️ Featured Internship Platform (USAME)**: [https://usame.uk.gov.in/](https://usame.uk.gov.in/)
+
+---
+
+## ✨ Features & Key Highlights
+
+### 🎨 1. Client Portfolio Site (`frontend/client`)
+- **Executive Career Timeline**: Connected with glowing milestone nodes for work experience and education (B.Tech CSE, 12th Board 93.6% - 18th Rank, 10th Board 96.2%).
+- **Interactive Skills Section**: Brand-tinted gradient progress bars with category filter tabs (**`All`**, **`Frontend`**, **`Backend & DB`**, **`CMS & Core`**).
+- **Direct Recruiter Contact Form**: Rate-limited contact form allowing recruiters to submit messages with instant UI confirmation, Copy Icon buttons, and toast alerts.
+- **Project & Certificate Lightbox**: Dedicated detail pages with full-screen zoomable lightbox image modals for hackathons and internship certificates.
+- **Google SEO & Rich Snippets**: Integrated JSON-LD microdata (`Person`, `WebSite`, `SoftwareSourceCode`, `BreadcrumbList`) and dynamic Open Graph meta tags.
+
+### 🛠️ 2. Admin Control Center (`frontend/admin`)
+- **Recruiter Messages Inbox**: Live inbox tab fetching recruiter submissions (`GET/DELETE /api/contact`) from MongoDB with unread message counters, search filters, and modal deletion.
+- **Visual Portfolio Editor**: Visual form editor and JSON editor syncing directly with the backend API (`PUT /api/portfolio`).
+
+### ⚙️ 3. Backend API Service (`backend`)
+- **RESTful Endpoints**: `/api/portfolio`, `/api/contact`, `/api/visits`, `/api/visits/session`, `/sitemap.xml`, and `/api/health`.
+- **Production Hardening**: Security headers (`helmet`), CORS origin protection, IP rate limiting (`express-rate-limit`), body validation, and structured logging.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend & UI**: React 18, Tailwind CSS, Vite, React Router 6, React Icons, Simple Icons
+- **Backend & APIs**: Node.js 24, Express, PHP
+- **CMS & Databases**: WordPress, MongoDB, Mongoose, MySQL
+- **Tooling & Deployment**: Render, GitHub Actions, Nodemon, Compression, Rate Limiter
+
+---
+
+## 📂 Directory Structure
 
 ```txt
 Portfolio/
-  backend/
-    server.js
-    src/
-      app.js
-      config.js
-      db.js
-      middleware/
-      models/
-      routes/
-      services/
-      utils/
-      validators/
-  data/
-    portfolio.json
-  frontend/
-    client/
-    admin/
+├── backend/
+│   ├── server.js
+│   └── src/
+│       ├── app.js
+│       ├── config.js
+│       ├── db.js
+│       ├── middleware/        # Security, Rate Limiter, Request Logger, Admin Auth
+│       ├── models/            # ContactMessage.js, Portfolio.js, Visit.js
+│       ├── routes/            # portfolio.js, contact.js, visits.js
+│       ├── services/          # portfolioStore.js
+│       └── utils/             # http.js, logger.js
+├── data/
+│   └── portfolio.json         # Master dataset (Projects, Achievements, Skills, Experience)
+├── frontend/
+│   ├── client/                # Public Portfolio React App
+│   │   ├── src/
+│   │   │   ├── components/    # SeoManager.jsx, etc.
+│   │   │   ├── pages/         # Home.jsx, ProjectDetail.jsx, AchievementDetail.jsx
+│   │   │   ├── api.js
+│   │   │   └── App.jsx
+│   └── admin/                 # Recruiter Messages Inbox & Visual Portfolio Editor
+│       ├── src/
+│       │   ├── api.js
+│       │   └── App.jsx
+└── README.md
 ```
 
-## Tech Stack
+---
 
-- **Frontend:** React, Vite, Tailwind CSS
-- **Admin:** React, Vite, Tailwind CSS
-- **Backend:** Node.js, Express
-- **Database:** MongoDB, Mongoose
+## 🚀 Quick Start Guide
 
-## Features
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas or local MongoDB instance
 
-- Responsive portfolio UI
-- Project detail pages
-- Achievement detail pages with gallery support
-- Admin JSON editor
-- MongoDB-backed API
-- Portfolio JSON validation before saving
-- Local JSON and database sync
-- Request hardening with CORS, security headers, rate limits, and admin auth
-
-## Quick Start
-
-### Backend
-
-Create `backend/.env` with your local values, then run:
+### 1. Backend API Service
 
 ```bash
 cd backend
@@ -63,7 +87,7 @@ npm install
 npm run dev
 ```
 
-Required backend environment variables:
+Create `backend/.env`:
 
 ```env
 PORT=4000
@@ -73,14 +97,9 @@ ADMIN_TOKEN=your_admin_token
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 CLIENT_URL=http://localhost:5173
 ADMIN_URL=http://localhost:5174
-JSON_BODY_LIMIT=1mb
-CACHE_SECONDS=60
-RATE_LIMIT_WINDOW_MS=60000
-RATE_LIMIT_MAX=120
-LOG_LEVEL=info
 ```
 
-### Client
+### 2. Client Application
 
 ```bash
 cd frontend/client
@@ -88,14 +107,9 @@ npm install
 npm run dev
 ```
 
-Optional client environment variable:
+App runs locally at `http://localhost:5173`.
 
-```env
-VITE_API_URL=http://localhost:4000
-VITE_SITE_URL=http://localhost:5173
-```
-
-### Admin
+### 3. Admin Control Center
 
 ```bash
 cd frontend/admin
@@ -103,47 +117,10 @@ npm install
 npm run dev
 ```
 
-Optional admin environment variable:
+App runs locally at `http://localhost:5174`.
 
-```env
-VITE_API_URL=http://localhost:4000
-```
+---
 
-## Updating Content
+## 📄 License
 
-- Use the admin app to load, validate, edit, and save portfolio JSON.
-- Or edit `data/portfolio.json` manually and restart the backend to sync it into MongoDB.
-
-## Visitor Count and Render Sleep
-
-The client counts one visitor per browser session. It retries quietly in the background so a sleeping free Render backend can wake up and still count the visitor.
-
-For faster cold starts, you can optionally add an UptimeRobot monitor:
-
-- **Monitor type:** HTTP(s)
-- **URL:** `https://your-backend.onrender.com/api/health`
-- **Interval:** 10 or 15 minutes
-- **Expected status:** `200`
-
-The health endpoint returns a small no-cache JSON response and does not increment visitor count.
-
-## Useful Commands
-
-```bash
-cd backend
-npm run check
-```
-
-```bash
-cd frontend/client
-npm run build
-```
-
-```bash
-cd frontend/admin
-npm run build
-```
-
-## License
-
-This project is open-source and free to use.
+This repository is open-source and available under the [MIT License](LICENSE).

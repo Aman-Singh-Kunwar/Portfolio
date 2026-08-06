@@ -37,6 +37,139 @@
     "availability": "Open to internships and junior full stack roles",
     "avatarUrl": "/images/me.jpg"
   },
+  "about": {
+    "summary": "Computer Science student focused on building modern full stack applications. I enjoy creating fast, accessible UIs backed by clean APIs and well structured data models.",
+    "highlights": [
+      "Hands-on experience with React, Node.js, PHP, MySQL, WordPress, and MongoDB",
+      "Strong foundation in algorithms, data structures, and system design",
+      "Interested in cloud certifications and scalable architecture"
+    ]
+  },
+  "techStack": [
+    "Node.js",
+    "React",
+    "MongoDB",
+    "Express",
+    "PHP",
+    "MySQL",
+    "WordPress",
+    "Tailwind CSS",
+    "Vite",
+    "Mongoose",
+    "GitHub"
+  ],
+  "skills": [
+    {
+      "name": "React",
+      "level": 90,
+      "category": "Frontend"
+    },
+    {
+      "name": "Node.js",
+      "level": 85,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "MongoDB",
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "PHP",
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "MySQL",
+      "level": 80,
+      "category": "Backend & DB"
+    },
+    {
+      "name": "WordPress",
+      "level": 85,
+      "category": "CMS & Core"
+    },
+    {
+      "name": "JavaScript",
+      "level": 75,
+      "category": "Frontend"
+    },
+    {
+      "name": "Tailwind CSS",
+      "level": 85,
+      "category": "Frontend"
+    },
+    {
+      "name": "Python",
+      "level": 80,
+      "category": "CMS & Core"
+    },
+    {
+      "name": "Java",
+      "level": 75,
+      "category": "CMS & Core"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Web Development Intern",
+      "company": "Evon Technologies",
+      "location": "Dehradun, Uttarakhand",
+      "start": "June 2026",
+      "end": "August 2026",
+      "bullets": [
+        "Contributed to full stack development for live government and client web platforms, including USAME",
+        "Built responsive UI components, customized WordPress themes, and integrated secure payment processing.",
+        "Performed end-to-end UI testing, QA, bug fixing, and collaborated with senior developers on deployment updates."
+      ],
+      "tech": [
+        "React",
+        "PHP",
+        "WordPress",
+        "MySQL"
+      ]
+    },
+    {
+      "title": "Social Internship",
+      "company": "Aasraa Trust",
+      "location": "Dehradun, Uttarakhand",
+      "start": "July 2025",
+      "end": "July 2025",
+      "bullets": [
+        "Volunteer educator and mentor for Class 11 and 12 students",
+        "Collaborated with teachers to build a positive learning environment",
+        "Provided one on one guidance for study plans and career goals"
+      ],
+      "tech": [
+        "Teaching",
+        "Mentorship",
+        "Chemistry"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Technology (CSE)",
+      "institution": "Dev Bhoomi Uttarakhand University, Dehradun",
+      "start": "2024",
+      "end": "2028",
+      "grade": "CGPA: 9.29"
+    },
+    {
+      "degree": "Higher Secondary School (12th Board)",
+      "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
+      "start": "2022",
+      "end": "2023",
+      "grade": "Percentage: 93.6 (18th Rank in State Board)"
+    },
+    {
+      "degree": "High School (10th Board)",
+      "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
+      "start": "2020",
+      "end": "2021",
+      "grade": "Percentage: 96.2"
+    }
+  ],
   "projects": [
     {
       "name": "ADHYAN.AI",
@@ -152,139 +285,6 @@
         "demo": "https://aman-singh-kunwar.github.io/Simon-say-game/",
         "repo": "https://github.com/Aman-Singh-Kunwar/Simon-say-game"
       }
-    }
-  ],
-  "about": {
-    "summary": "Computer Science student focused on building modern full stack applications. I enjoy creating fast, accessible UIs backed by clean APIs and well structured data models.",
-    "highlights": [
-      "Hands-on experience with React, Node.js, PHP, MySQL, WordPress, and MongoDB",
-      "Strong foundation in algorithms, data structures, and system design",
-      "Interested in cloud certifications and scalable architecture"
-    ]
-  },
-  "skills": [
-    {
-      "name": "React",
-      "level": 90,
-      "category": "Frontend"
-    },
-    {
-      "name": "Node.js",
-      "level": 85,
-      "category": "Backend & DB"
-    },
-    {
-      "name": "MongoDB",
-      "level": 80,
-      "category": "Backend & DB"
-    },
-    {
-      "name": "PHP",
-      "level": 80,
-      "category": "Backend & DB"
-    },
-    {
-      "name": "MySQL",
-      "level": 80,
-      "category": "Backend & DB"
-    },
-    {
-      "name": "WordPress",
-      "level": 85,
-      "category": "CMS & Core"
-    },
-    {
-      "name": "JavaScript",
-      "level": 75,
-      "category": "Frontend"
-    },
-    {
-      "name": "Tailwind CSS",
-      "level": 85,
-      "category": "Frontend"
-    },
-    {
-      "name": "Python",
-      "level": 80,
-      "category": "CMS & Core"
-    },
-    {
-      "name": "Java",
-      "level": 75,
-      "category": "CMS & Core"
-    }
-  ],
-  "techStack": [
-    "Node.js",
-    "React",
-    "MongoDB",
-    "Express",
-    "PHP",
-    "MySQL",
-    "WordPress",
-    "Tailwind CSS",
-    "Vite",
-    "Mongoose",
-    "GitHub"
-  ],
-  "experience": [
-    {
-      "title": "Web Development Intern",
-      "company": "Evon Technologies",
-      "location": "Dehradun, Uttarakhand",
-      "start": "June 2026",
-      "end": "August 2026",
-      "bullets": [
-        "Contributed to full stack development for live government and client web platforms, including USAME",
-        "Built responsive UI components, customized WordPress themes, and integrated secure payment processing.",
-        "Performed end-to-end UI testing, QA, bug fixing, and collaborated with senior developers on deployment updates."
-      ],
-      "tech": [
-        "React",
-        "PHP",
-        "WordPress",
-        "MySQL"
-      ]
-    },
-    {
-      "title": "Social Internship",
-      "company": "Aasraa Trust",
-      "location": "Dehradun, Uttarakhand",
-      "start": "July 2025",
-      "end": "July 2025",
-      "bullets": [
-        "Volunteer educator and mentor for Class 11 and 12 students",
-        "Collaborated with teachers to build a positive learning environment",
-        "Provided one on one guidance for study plans and career goals"
-      ],
-      "tech": [
-        "Teaching",
-        "Mentorship",
-        "Chemistry"
-      ]
-    }
-  ],
-  "education": [
-    {
-      "degree": "Bachelor of Technology (CSE)",
-      "institution": "Dev Bhoomi Uttarakhand University, Dehradun",
-      "start": "2024",
-      "end": "2028",
-      "grade": "CGPA: 9.29"
-    },
-    {
-      "degree": "Higher Secondary School (12th Board)",
-      "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
-      "start": "2022",
-      "end": "2023",
-      "grade": "Percentage: 93.6 (18th Rank in State Board)"
-    },
-    {
-      "degree": "High School (10th Board)",
-      "institution": "Shree Goverdhan Saraswati Vidya Mandir Inter College Dharampur, Dehradun",
-      "start": "2020",
-      "end": "2021",
-      "grade": "Percentage: 96.2"
     }
   ],
   "stats": {
