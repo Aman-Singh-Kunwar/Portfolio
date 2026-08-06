@@ -8,7 +8,6 @@ A modern, high-performance, full-stack Developer Portfolio and Admin Control Sys
 
 - **🌐 Live Portfolio Application**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
 - **🐙 GitHub Repository**: [https://github.com/Aman-Singh-Kunwar/Portfolio](https://github.com/Aman-Singh-Kunwar/Portfolio)
-- **🏛️ Featured Internship Platform (USAME)**: [https://usame.uk.gov.in/](https://usame.uk.gov.in/)
 
 ---
 
