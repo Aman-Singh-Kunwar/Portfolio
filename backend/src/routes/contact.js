@@ -63,6 +63,34 @@ router.get(
   })
 );
 
+router.patch(
+  "/:id/status",
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body || {};
+
+    const validStatuses = ["new", "in_discussion", "interview_scheduled", "archived"];
+    if (!validStatuses.includes(status)) {
+      throw new HttpError(400, "Invalid lead status");
+    }
+
+    const updated = await ContactMessage.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).lean();
+
+    if (!updated) {
+      throw new HttpError(404, "Message not found");
+    }
+
+    logger.info("contact message status updated by admin", { id, status });
+    res.set("Cache-Control", "no-store");
+    return res.json({ success: true, message: updated });
+  })
+);
+
 router.delete(
   "/:id",
   requireAdmin,

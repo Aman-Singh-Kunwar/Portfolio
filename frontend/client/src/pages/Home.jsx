@@ -18,6 +18,8 @@ import {
   SiCss
 } from "react-icons/si";
 import { sendContactMessage } from "../api";
+import ResumeModal from "../components/ResumeModal";
+import ShareModal from "../components/ShareModal";
 
 const getSlug = (project) =>
   project.slug || project.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -34,6 +36,9 @@ export default function Home({ portfolio, status }) {
   const [copyToast, setCopyToast] = useState("");
   const [copiedField, setCopiedField] = useState("");
   const [activeSkillCategory, setActiveSkillCategory] = useState("All");
+  const [activeProjectTech, setActiveProjectTech] = useState("All");
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -394,9 +399,21 @@ export default function Home({ portfolio, status }) {
               <a href="#hire-me" className="btn-secondary">
                 Hire Me
               </a>
-              <a href={basics.resumeUrl} className="btn-secondary">
+              <button
+                type="button"
+                onClick={() => setIsResumeModalOpen(true)}
+                className="btn-secondary"
+              >
                 {hero.ctaSecondary}
-              </a>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsShareModalOpen(true)}
+                className="btn-secondary flex items-center gap-2"
+                title="Share candidate profile via WhatsApp, LinkedIn, Twitter, Email, or OS Share Sheet"
+              >
+                <FaCopy className="text-amber-400" /> Share Profile
+              </button>
             </div>
             <div className="flex flex-wrap gap-3 text-sm text-slate-300">
               {basics.social.map((item) => (
@@ -658,10 +675,37 @@ export default function Home({ portfolio, status }) {
 
       <section id="projects" className="section section-deferred">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="section-subtitle">Projects</p>
-          <h2 className="section-title">Selected work</h2>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="section-subtitle">Projects</p>
+              <h2 className="section-title">Selected work</h2>
+            </div>
+            <div className="flex flex-wrap gap-2 rounded-xl border border-white/10 bg-slate-950/60 p-1.5 text-xs">
+              {["All", "React", "Node.js", "PHP", "MongoDB", "Python", "JavaScript"].map((tech) => (
+                <button
+                  key={tech}
+                  type="button"
+                  onClick={() => setActiveProjectTech(tech)}
+                  className={`rounded-lg px-3 py-1.5 font-medium transition ${
+                    activeProjectTech === tech
+                      ? "bg-amber-400 text-slate-950 font-semibold shadow"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  {tech}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {projects.map((project) => {
+            {projects
+              .filter((project) => {
+                if (activeProjectTech === "All") return true;
+                const pTechs = (project.tech || []).map((t) => t.toLowerCase());
+                return pTechs.some((t) => t.includes(activeProjectTech.toLowerCase()));
+              })
+              .map((project) => {
               const slug = getSlug(project);
               const projectImage = typeof project.image === "string" ? project.image.trim() : "";
               return (
@@ -841,9 +885,9 @@ export default function Home({ portfolio, status }) {
       </section>
 
       <section id="hire-me" className="section section-deferred">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <p className="section-subtitle">Hire Me</p>
-          <div className="card card-3d p-8 md:p-10 relative">
+          <div className="card card-3d p-5 sm:p-8 md:p-10 relative overflow-hidden">
             {copyToast && (
               <div className="absolute top-4 right-4 z-20 rounded-full border border-amber-300/40 bg-amber-400/20 px-4 py-1.5 text-xs font-semibold text-amber-200 backdrop-blur shadow-lg animate-fade-in">
                 {copyToast}
@@ -857,17 +901,17 @@ export default function Home({ portfolio, status }) {
                     I am looking for internship and entry-level full stack opportunities where I can
                     build scalable products, collaborate with strong teams, and keep learning fast.
                   </p>
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-300">
-                    <span className="chip">{availability}</span>
-                    <span className="chip">{basics.location}</span>
+                  <div className="mt-4 flex flex-wrap gap-2 text-[10px] sm:text-xs text-slate-300">
+                    <span className="chip !tracking-[0.1em] sm:!tracking-[0.2em]">{availability}</span>
+                    <span className="chip !tracking-[0.1em] sm:!tracking-[0.2em]">{basics.location}</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="card card-3d p-4 flex items-center justify-between gap-4">
-                    <div>
+                  <div className="card card-3d p-3 sm:p-4 flex items-center justify-between gap-2 sm:gap-4">
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Email</p>
-                      <p className="mt-1 text-sm text-slate-200 font-mono">{basics.email}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-slate-200 font-mono break-all">{basics.email}</p>
                     </div>
                     <button
                       type="button"
@@ -883,10 +927,10 @@ export default function Home({ portfolio, status }) {
                       {copiedField === "Email" ? <FaCheck className="text-sm" /> : <FaCopy className="text-sm" />}
                     </button>
                   </div>
-                  <div className="card card-3d p-4 flex items-center justify-between gap-4">
-                    <div>
+                  <div className="card card-3d p-3 sm:p-4 flex items-center justify-between gap-2 sm:gap-4">
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Phone</p>
-                      <p className="mt-1 text-sm text-slate-200 font-mono">{basics.phone}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-slate-200 font-mono break-all">{basics.phone}</p>
                     </div>
                     <button
                       type="button"
@@ -910,9 +954,13 @@ export default function Home({ portfolio, status }) {
                       Open Mail Client
                     </a>
                   )}
-                  <a href={basics.resumeUrl} className="btn-secondary">
+                  <button
+                    type="button"
+                    onClick={() => setIsResumeModalOpen(true)}
+                    className="btn-secondary"
+                  >
                     Download Resume
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -925,15 +973,23 @@ export default function Home({ portfolio, status }) {
                 </div>
 
                 {contactStatus === "success" ? (
-                  <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-emerald-200 text-sm space-y-2">
-                    <p className="font-semibold">Message sent successfully!</p>
-                    <p className="text-xs text-emerald-300/80">
-                      Thank you for reaching out. I will get back to you shortly.
-                    </p>
+                  <div className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-5 text-emerald-200 text-sm space-y-3 animate-fade-in shadow-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-emerald-300 text-xl font-bold">
+                        🎉
+                      </div>
+                      <div>
+                        <p className="font-bold text-base text-emerald-100">Message Received!</p>
+                        <p className="text-xs text-emerald-300">Thank you for reaching out.</p>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-emerald-400/20 bg-emerald-950/40 text-xs text-emerald-200 leading-relaxed font-medium">
+                      ⚡ <strong>Response Guarantee:</strong> Aman typically responds to recruiter inquiries within <strong>2–4 hours</strong>.
+                    </div>
                     <button
                       type="button"
                       onClick={() => setContactStatus("idle")}
-                      className="btn-secondary text-xs mt-2"
+                      className="btn-secondary text-xs mt-1 border-emerald-400/30 text-emerald-200 hover:bg-emerald-400 hover:text-slate-950"
                     >
                       Send another message
                     </button>
@@ -1015,6 +1071,17 @@ export default function Home({ portfolio, status }) {
           </div>
         </div>
       </section>
+      <ResumeModal
+        isOpen={isResumeModalOpen}
+        onClose={() => setIsResumeModalOpen(false)}
+        resumeUrl={basics.resumeUrl}
+      />
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        name={hero.name}
+        role={basics.role}
+      />
     </>
   );
 }

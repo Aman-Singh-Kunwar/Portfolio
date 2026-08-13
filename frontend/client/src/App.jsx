@@ -4,6 +4,7 @@ import { countVisitSession, fetchPortfolio, fetchVisitCount } from "./api";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
 import SeoManager from "./components/SeoManager.jsx";
+import ResumeModal from "./components/ResumeModal.jsx";
 import Home from "./pages/Home.jsx";
 
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
@@ -518,6 +519,7 @@ export default function App() {
   const [portfolio, setPortfolio] = useState(() => getCachedPortfolio() || normalizePortfolio(fallbackData));
   const [status, setStatus] = useState(() => (getCachedPortfolio() ? "ready" : "loading"));
   const [visitCount, setVisitCount] = useState(null);
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -589,7 +591,11 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen">
         <SeoManager portfolio={portfolio} />
-        <Header hero={portfolio.hero} basics={portfolio.basics} />
+        <Header
+          hero={portfolio.hero}
+          basics={portfolio.basics}
+          onOpenResume={() => setIsResumeModalOpen(true)}
+        />
         <main>
           <Suspense
             fallback={
@@ -613,6 +619,11 @@ export default function App() {
           </Suspense>
         </main>
         <Footer visitCount={visitCount} />
+        <ResumeModal
+          isOpen={isResumeModalOpen}
+          onClose={() => setIsResumeModalOpen(false)}
+          resumeUrl={portfolio.basics?.resumeUrl}
+        />
       </div>
     </BrowserRouter>
   );

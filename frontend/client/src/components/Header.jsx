@@ -11,13 +11,21 @@ const navLinks = [
   { label: "Hire Me", href: "#hire-me" }
 ];
 
-export default function Header({ hero, basics }) {
+export default function Header({ hero, basics, onOpenResume }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
   const avatarSrc = basics?.avatarThumbUrl || "/images/me-avatar.jpg";
   const closeMobile = () => setMobileOpen(false);
   const headerRef = useRef(null);
+
+  const handleResumeClick = (e) => {
+    if (onOpenResume) {
+      e.preventDefault();
+      closeMobile();
+      onOpenResume();
+    }
+  };
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -89,9 +97,14 @@ export default function Header({ hero, basics }) {
           })}
         </div>
         <div className="flex items-center gap-3">
-          <a href={basics?.resumeUrl || "/cv.pdf"} className="btn-secondary">
+          <button
+            type="button"
+            onClick={handleResumeClick}
+            className="btn-secondary"
+            title="Preview or Download Resume"
+          >
             Resume
-          </a>
+          </button>
           <button
             type="button"
             className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/90 hover:border-white/30"
@@ -147,6 +160,13 @@ export default function Header({ hero, basics }) {
                 </a>
               );
             })}
+            <button
+              type="button"
+              onClick={handleResumeClick}
+              className="btn-secondary w-full text-center justify-center mt-2"
+            >
+              Preview Resume
+            </button>
           </div>
         </div>
       )}

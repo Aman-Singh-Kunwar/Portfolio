@@ -38,25 +38,29 @@
     "avatarUrl": "/images/me.jpg"
   },
   "about": {
-    "summary": "Computer Science student focused on building modern full stack applications. I enjoy creating fast, accessible UIs backed by clean APIs and well structured data models.",
+    "summary": "Computer Science student and Full Stack Developer with hands-on experience building and maintaining live web platforms. I work across React, Node.js, PHP, WordPress, and MySQL, with a focus on responsive UI, APIs, and reliable web applications.",
     "highlights": [
       "Hands-on experience with React, Node.js, PHP, MySQL, WordPress, and MongoDB",
-      "Strong foundation in algorithms, data structures, and system design",
-      "Interested in cloud certifications and scalable architecture"
+      "Professional experience working on live client and government web platforms",
+      "Strong foundation in algorithms, data structures, APIs, and scalable web architecture"
     ]
   },
   "techStack": [
-    "Node.js",
+    "JavaScript",
     "React",
+    "Node.js",
+    "Express.js",
     "MongoDB",
-    "Express",
     "PHP",
     "MySQL",
     "WordPress",
+    "HTML5",
+    "CSS3",
     "Tailwind CSS",
-    "Vite",
-    "Mongoose",
-    "GitHub"
+    "Docker",
+    "Redis",
+    "Kafka",
+    "Socket.IO"
   ],
   "skills": [
     {
@@ -101,7 +105,7 @@
     },
     {
       "name": "Python",
-      "level": 80,
+      "level": 70,
       "category": "CMS & Core"
     },
     {
@@ -118,15 +122,16 @@
       "start": "June 2026",
       "end": "August 2026",
       "bullets": [
-        "Contributed to full stack development for live government and client web platforms, including USAME",
+        "Contributed to front-end and back-end development for live government and client web platforms, including USAME.",
         "Built responsive UI components, customized WordPress themes, and integrated secure payment processing.",
         "Performed end-to-end UI testing, QA, bug fixing, and collaborated with senior developers on deployment updates."
       ],
       "tech": [
-        "React",
         "PHP",
         "WordPress",
-        "MySQL"
+        "MySQL",
+        "JavaScript",
+        "CSS"
       ]
     },
     {
@@ -237,7 +242,7 @@
       ],
       "image": "/images/ecocommute.jpg",
       "links": {
-        "demo": "https://ecocommute-frontend.onrender.com/",
+        "demo": "",
         "repo": "https://github.com/Aman-Singh-Kunwar/EcoCommute"
       }
     },
@@ -359,7 +364,7 @@
         "Contributed to front-end and back-end development for live government and client web platforms.",
         "Developed responsive UI components and implemented feature enhancements across both client-facing site and admin panel.",
         "Customized WordPress themes and plugins to meet project requirements.",
-        "Integrated the ICICI Bank Payment Gateway for secure online payment processing.",
+        "Integrated the Payment Gateway for secure online payment processing.",
         "Performed UI testing, bug fixing, quality assurance, and cross-browser compatibility testing.",
         "Collaborated with senior developers to implement new features, resolve issues, and deploy project updates.",
         "Contributed to the development and maintenance of the Uttarakhand State Authority for Minority Education (USAME) website: https://usame.uk.gov.in/"
@@ -392,7 +397,7 @@
     }
   ],
   "contact": {
-    "address": "Police Family Quarters, Raipur Road, Dehradun",
+    "address": "Dehradun, Uttarakhand, India",
     "email": "amansinghkunwar07@gmail.com",
     "phone": "+91 7983932346"
   }

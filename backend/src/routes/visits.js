@@ -1,5 +1,5 @@
 import express from "express";
-import { countVisitSession, getVisitCount } from "../services/visitStore.js";
+import { countVisitSession, getVisitCount, getVisitTrends } from "../services/visitStore.js";
 import { asyncHandler } from "../utils/http.js";
 
 const router = express.Router();
@@ -8,8 +8,9 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     const count = await getVisitCount();
+    const trends = await getVisitTrends();
     res.set("Cache-Control", "no-store");
-    return res.json({ count });
+    return res.json({ count, trends });
   })
 );
 

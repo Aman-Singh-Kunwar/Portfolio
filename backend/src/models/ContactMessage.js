@@ -30,6 +30,11 @@ const contactMessageSchema = new mongoose.Schema(
     read: {
       type: Boolean,
       default: false
+    },
+    status: {
+      type: String,
+      enum: ["new", "in_discussion", "interview_scheduled", "archived"],
+      default: "new"
     }
   },
   { timestamps: true }

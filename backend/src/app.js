@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import compression from "compression";
+import authRoutes from "./routes/auth.js";
 import portfolioRoutes from "./routes/portfolio.js";
 import visitRoutes from "./routes/visits.js";
 import contactRoutes from "./routes/contact.js";

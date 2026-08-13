@@ -9,6 +9,8 @@ export default function ProjectDetail({ portfolio }) {
   const projects = portfolio.projects || [];
   const project = projects.find((item) => getSlug(item) === slug);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
+  const [deviceMode, setDeviceMode] = useState("desktop");
 
   const setProjectFallbackImage = (event) => {
     event.currentTarget.onerror = null;
@@ -21,13 +23,21 @@ export default function ProjectDetail({ portfolio }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") setIsLightboxOpen(false);
+      if (e.key === "Escape") {
+        setIsLightboxOpen(false);
+        setIsIframeModalOpen(false);
+      }
     };
-    if (isLightboxOpen) {
+    if (isLightboxOpen || isIframeModalOpen) {
       window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
     }
-  }, [isLightboxOpen]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "auto";
+    };
+  }, [isLightboxOpen, isIframeModalOpen]);
+
   const techLinks = {
     javascript: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
     react: "https://react.dev/",
@@ -70,6 +80,7 @@ export default function ProjectDetail({ portfolio }) {
     github: "https://github.com/",
     "gemini-2.5-flash apis": "https://ai.google.dev/"
   };
+
   const getTechUrl = (tech) => techLinks[tech.toLowerCase().trim()];
   const renderTechChip = (tech) => {
     const url = getTechUrl(tech);
@@ -118,8 +129,8 @@ export default function ProjectDetail({ portfolio }) {
   const projectImage = projectImageRaw || "/images/portfolio.jpg";
 
   return (
-    <section className="section">
-      <div className="mx-auto max-w-5xl px-6">
+    <section className="section py-12">
+      <div className="mx-auto max-w-4xl px-6">
         <div className="mb-6 flex items-center gap-3 text-sm text-slate-400">
           <Link to="/" className="hover:text-white">
             Home
@@ -129,11 +140,11 @@ export default function ProjectDetail({ portfolio }) {
         </div>
 
         <div className="card card-3d overflow-hidden">
-          {(project.image || projectImage) && (
+          {projectImage && (
             <div
-              className="block image-frame cursor-zoom-in relative group"
+              className="relative cursor-pointer group"
               onClick={() => setIsLightboxOpen(true)}
-              title="Click to view full screen"
+              title="Click to view full image"
             >
               <img
                 src={projectImage}
@@ -171,14 +182,23 @@ export default function ProjectDetail({ portfolio }) {
 
             <div className="mt-8 flex flex-wrap gap-4">
               {project.links?.demo && (
-                <a
-                  href={project.links.demo}
-                  className="btn-primary"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Live Demo
-                </a>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsIframeModalOpen(true)}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    ⚡ Test Live Demo (iFrame)
+                  </button>
+                  <a
+                    href={project.links.demo}
+                    className="btn-secondary"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open External Tab ↗
+                  </a>
+                </>
               )}
               {project.links?.repo && (
                 <a
@@ -194,6 +214,89 @@ export default function ProjectDetail({ portfolio }) {
           </div>
         </div>
       </div>
+
+      {isIframeModalOpen && project.links?.demo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in">
+          <div className="relative flex flex-col w-full h-full sm:h-[88vh] sm:max-w-5xl sm:rounded-2xl border-0 sm:border sm:border-white/20 bg-slate-900 shadow-2xl overflow-hidden">
+            {/* Toolbar */}
+            <div className="flex items-center justify-between gap-2 p-3 border-b border-white/10 bg-slate-950/90 shrink-0">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <div className="flex gap-1.5 shrink-0">
+                  <span className="h-3 w-3 rounded-full bg-rose-500" />
+                  <span className="h-3 w-3 rounded-full bg-amber-500" />
+                  <span className="h-3 w-3 rounded-full bg-emerald-500" />
+                </div>
+                <span className="text-xs font-mono text-slate-300 truncate max-w-[120px] sm:max-w-xs">
+                  {project.links.demo}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="hidden sm:flex items-center gap-1 rounded-xl bg-slate-950 p-1 border border-white/10 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setDeviceMode("desktop")}
+                    className={`px-2.5 py-1 rounded-lg font-medium transition ${
+                      deviceMode === "desktop" ? "bg-amber-400 text-slate-950 font-semibold" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    🖥️ Desktop
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeviceMode("mobile")}
+                    className={`px-2.5 py-1 rounded-lg font-medium transition ${
+                      deviceMode === "mobile" ? "bg-amber-400 text-slate-950 font-semibold" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    📱 Mobile
+                  </button>
+                </div>
+                <a
+                  href={project.links.demo}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="sm:hidden btn-secondary text-[11px] px-2.5 py-1"
+                >
+                  Open Tab ↗
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setIsIframeModalOpen(false)}
+                  className="grid h-8 w-8 place-items-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/20 text-white transition text-sm font-bold"
+                  title="Close Live Preview"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* iFrame Viewport Stage */}
+            <div className="flex-1 bg-slate-950 flex items-center justify-center p-0 sm:p-4 overflow-hidden relative">
+              <div
+                className={`transition-all duration-300 w-full h-full bg-white relative overflow-hidden ${
+                  deviceMode === "mobile"
+                    ? "sm:max-w-[375px] sm:max-h-[720px] sm:rounded-[32px] sm:border-[8px] sm:border-slate-800 sm:shadow-2xl"
+                    : "sm:rounded-xl"
+                }`}
+              >
+                <iframe
+                  src={project.links.demo}
+                  title={`${project.name} Live Demo`}
+                  className="w-full h-full border-0 bg-white block"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "0",
+                    overflow: "hidden",
+                    touchAction: "pan-x pan-y",
+                    WebkitOverflowScrolling: "touch"
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isLightboxOpen && (
         <div

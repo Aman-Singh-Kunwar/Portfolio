@@ -5,34 +5,44 @@
 :root {
   --ink: #e2e8f0;
   --muted: #94a3b8;
-  --bg: #0f172a;
-  --card: rgba(30, 41, 59, 0.7);
-  --border: rgba(148, 163, 184, 0.2);
+  --bg: #0b1120;
+  --bg-soft: #111827;
+  --accent: #f59e0b;
+  --accent-2: #2dd4bf;
+  --card: rgba(15, 23, 42, 0.7);
+  --border: rgba(148, 163, 184, 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100vh;
   background:
-    radial-gradient(900px 600px at 20% 10%, rgba(56, 189, 248, 0.15), transparent 60%),
-    radial-gradient(800px 600px at 80% 0%, rgba(248, 113, 113, 0.1), transparent 55%),
+    radial-gradient(900px 600px at 10% 10%, rgba(45, 212, 191, 0.15), transparent 60%),
+    radial-gradient(800px 600px at 90% 10%, rgba(245, 158, 11, 0.18), transparent 55%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(59, 130, 246, 0.12), transparent 65%),
     var(--bg);
   color: var(--ink);
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-family: "Segoe UI", "Trebuchet MS", "Helvetica Neue", Arial, sans-serif;
 }
 
 h1,
 h2,
-h3 {
-  font-family: "Space Grotesk", system-ui, sans-serif;
+h3,
+h4 {
+  font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
 }
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-lg;
+    @apply rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-md shadow-lg;
   }
 
   .input {
-    @apply w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-sm text-slate-200 focus:border-amber-300 focus:outline-none;
+    @apply w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-200 focus:border-amber-300 focus:outline-none;
   }
 
   .btn {
@@ -51,6 +61,20 @@ h3 {
     @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em];
   }
 
+  /* Sidebar */
+  .sidebar-link {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 transition-all duration-150;
+  }
+
+  .sidebar-link:hover {
+    @apply bg-white/5 text-white;
+  }
+
+  .sidebar-link-active {
+    @apply bg-amber-400/15 border border-amber-400/30 text-amber-300 font-semibold;
+  }
+
+  /* Modals */
   .modal-backdrop {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-6;
     backdrop-filter: blur(10px);
@@ -71,4 +95,14 @@ h3 {
   .modal-iframe {
     @apply h-full w-full;
   }
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
