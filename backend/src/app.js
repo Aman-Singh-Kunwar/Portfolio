@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import compression from "compression";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import authRoutes from "./routes/auth.js";
 import portfolioRoutes from "./routes/portfolio.js";
 import visitRoutes from "./routes/visits.js";
@@ -12,6 +15,10 @@ import { requestLogger } from "./middleware/requestLogger.js";
 import { securityHeaders } from "./middleware/security.js";
 import { escapeHtml, sendError } from "./utils/http.js";
 import { logger } from "./utils/logger.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDistPath = path.resolve(__dirname, "../../frontend/client/dist");
 
 const app = express();
 
@@ -34,6 +41,11 @@ app.use(securityHeaders);
 app.use(requestLogger);
 app.use(createRateLimiter({ windowMs: config.rateLimitWindowMs, max: config.rateLimitMax }));
 app.use(express.json({ limit: config.bodyLimit }));
+
+// Serve static frontend assets if dist folder exists
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+}
 
 function renderBackendPage({ title, heading, message, reqPath, links }) {
   const linkItems = links
@@ -121,6 +133,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/visits", visitRoutes);
 app.use("/api/contact", contactRoutes);
@@ -193,7 +206,12 @@ Sitemap: ${req.protocol}://${req.get("host")}/sitemap.xml
   return res.status(200).send(robots);
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req, res, next) => {
+  const indexPath = path.join(clientDistPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+
   const baseUrl = `${req.protocol}://${req.get("host")}`;
   const html = renderBackendPage({
     title: "Portfolio Backend API",
@@ -216,8 +234,8 @@ app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
 });
 
+// SPA Fallback: Serve client dist index.html for non-API sub-routes
 app.use((req, res) => {
-  const baseUrl = `${req.protocol}://${req.get("host")}`;
   if (req.path.startsWith("/api/")) {
     return res.status(404).json({
       error: "Route not found",
@@ -226,6 +244,12 @@ app.use((req, res) => {
     });
   }
 
+  const indexPath = path.join(clientDistPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
   const html = renderBackendPage({
     title: "Route Not Found",
     heading: "Route not found",
