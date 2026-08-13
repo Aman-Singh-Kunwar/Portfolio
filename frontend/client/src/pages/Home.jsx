@@ -21,8 +21,8 @@ import { sendContactMessage } from "../api";
 import ResumeModal from "../components/ResumeModal";
 import ShareModal from "../components/ShareModal";
 
-const getSlug = (project) =>
-  project.slug || project.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+const getSlug = (item) =>
+  item?.slug || (item?.name || item?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
 export default function Home({ portfolio, status }) {
   const { hero, basics, about, skills, techStack, experience, education, projects, achievements } =

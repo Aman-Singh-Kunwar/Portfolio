@@ -1,12 +1,12 @@
-import { Link, useParams } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 const getSlug = (item) =>
-  item.slug || item.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  item?.slug || (item?.title || item?.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
-export default function AchievementDetail({ portfolio }) {
+export default function AchievementDetail({ portfolio = {} }) {
   const { slug } = useParams();
-  const achievements = portfolio.achievements || [];
+  const achievements = portfolio?.achievements || [];
   const achievement = useMemo(
     () => achievements.find((item) => getSlug(item) === slug),
     [achievements, slug]

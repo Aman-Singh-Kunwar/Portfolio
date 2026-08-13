@@ -1,12 +1,12 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const getSlug = (project) =>
-  project.slug || project.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+const getSlug = (item) =>
+  item?.slug || (item?.name || item?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
-export default function ProjectDetail({ portfolio }) {
+export default function ProjectDetail({ portfolio = {} }) {
   const { slug } = useParams();
-  const projects = portfolio.projects || [];
+  const projects = portfolio?.projects || [];
   const project = projects.find((item) => getSlug(item) === slug);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
