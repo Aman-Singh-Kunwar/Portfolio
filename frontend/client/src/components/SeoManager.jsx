@@ -7,10 +7,10 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_IMAGE = "/images/me.jpg";
 
 const getProjectSlug = (project) =>
-  project.slug || project.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  project?.slug || (project?.name || project?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
 const getAchievementSlug = (item) =>
-  item.slug || item.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  item?.slug || (item?.title || item?.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
 function setMeta(attr, key, content) {
   if (!content) return;
