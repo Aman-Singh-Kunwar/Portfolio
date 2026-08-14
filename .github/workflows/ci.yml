@@ -19,19 +19,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
       - name: 📦 Install Root Dependencies
-        run: npm ci || npm install
+        run: npm install
 
       - name: 📦 Install Backend Dependencies
-        run: npm --prefix backend ci || npm --prefix backend install
+        run: npm --prefix backend install
 
       - name: 📦 Install Client Frontend Dependencies
-        run: npm --prefix frontend/client ci || npm --prefix frontend/client install
+        run: npm --prefix frontend/client install
 
       - name: 📦 Install Admin Frontend Dependencies
-        run: npm --prefix frontend/admin ci || npm --prefix frontend/admin install
+        run: npm --prefix frontend/admin install
 
       - name: 🔍 Backend Syntax & Architecture Check
         run: npm --prefix backend run check
