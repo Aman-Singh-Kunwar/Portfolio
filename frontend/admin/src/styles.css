@@ -2,15 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base Default (Amber) */
 :root {
   --ink: #e2e8f0;
   --muted: #94a3b8;
   --bg: #0b1120;
   --bg-soft: #111827;
-  --accent: #f59e0b;
-  --accent-2: #2dd4bf;
   --card: rgba(15, 23, 42, 0.7);
   --border: rgba(148, 163, 184, 0.18);
+  
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-glow: rgba(245, 158, 11, 0.25);
+  --accent-soft: rgba(245, 158, 11, 0.14);
+  --accent-border: rgba(245, 158, 11, 0.35);
+  --accent-ink: #020617;
+  --grad-1: rgba(245, 158, 11, 0.18);
+  --grad-2: rgba(45, 212, 191, 0.12);
+}
+
+/* Emerald Teal Theme */
+[data-accent="emerald"] {
+  --accent: #10b981;
+  --accent-hover: #34d399;
+  --accent-glow: rgba(16, 185, 129, 0.25);
+  --accent-soft: rgba(16, 185, 129, 0.14);
+  --accent-border: rgba(16, 185, 129, 0.35);
+  --accent-ink: #020617;
+  --grad-1: rgba(16, 185, 129, 0.18);
+  --grad-2: rgba(56, 189, 248, 0.12);
+}
+
+/* Cyber Violet Theme */
+[data-accent="violet"] {
+  --accent: #a855f7;
+  --accent-hover: #c084fc;
+  --accent-glow: rgba(168, 85, 247, 0.25);
+  --accent-soft: rgba(168, 85, 247, 0.14);
+  --accent-border: rgba(168, 85, 247, 0.35);
+  --accent-ink: #020617;
+  --grad-1: rgba(168, 85, 247, 0.20);
+  --grad-2: rgba(236, 72, 153, 0.12);
+}
+
+/* Sky Blue Theme */
+[data-accent="sky"] {
+  --accent: #0ea5e9;
+  --accent-hover: #38bdf8;
+  --accent-glow: rgba(14, 165, 233, 0.25);
+  --accent-soft: rgba(14, 165, 233, 0.14);
+  --accent-border: rgba(14, 165, 233, 0.35);
+  --accent-ink: #020617;
+  --grad-1: rgba(14, 165, 233, 0.20);
+  --grad-2: rgba(99, 102, 241, 0.12);
+}
+
+/* Neon Rose Theme */
+[data-accent="rose"] {
+  --accent: #f43f5e;
+  --accent-hover: #fb7185;
+  --accent-glow: rgba(244, 63, 94, 0.25);
+  --accent-soft: rgba(244, 63, 94, 0.14);
+  --accent-border: rgba(244, 63, 94, 0.35);
+  --accent-ink: #020617;
+  --grad-1: rgba(244, 63, 94, 0.20);
+  --grad-2: rgba(251, 146, 60, 0.12);
 }
 
 html {
@@ -20,12 +76,13 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(900px 600px at 10% 10%, rgba(45, 212, 191, 0.15), transparent 60%),
-    radial-gradient(800px 600px at 90% 10%, rgba(245, 158, 11, 0.18), transparent 55%),
-    radial-gradient(1000px 700px at 50% 100%, rgba(59, 130, 246, 0.12), transparent 65%),
+    radial-gradient(900px 600px at 90% 10%, var(--grad-1), transparent 55%),
+    radial-gradient(800px 600px at 10% 10%, var(--grad-2), transparent 60%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(59, 130, 246, 0.10), transparent 65%),
     var(--bg);
   color: var(--ink);
   font-family: "Segoe UI", "Trebuchet MS", "Helvetica Neue", Arial, sans-serif;
+  transition: background 0.4s ease;
 }
 
 h1,
@@ -42,19 +99,32 @@ h4 {
   }
 
   .input {
-    @apply w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-200 focus:border-amber-300 focus:outline-none;
+    @apply w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-200 focus:outline-none transition;
+  }
+
+  .input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 12px var(--accent-glow);
   }
 
   .btn {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5;
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 cursor-pointer;
   }
 
   .btn-primary {
-    @apply btn bg-amber-400 text-slate-900 hover:bg-amber-300;
+    @apply btn shadow-md font-bold;
+    background-color: var(--accent) !important;
+    color: var(--accent-ink) !important;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent-hover) !important;
+    box-shadow: 0 6px 20px var(--accent-glow);
   }
 
   .btn-secondary {
-    @apply btn border border-white/20 text-white/90 hover:border-white/40;
+    @apply btn border border-white/20 text-white/90 hover:border-white/40 hover:bg-white/5;
   }
 
   .badge {
@@ -71,7 +141,11 @@ h4 {
   }
 
   .sidebar-link-active {
-    @apply bg-amber-400/15 border border-amber-400/30 text-amber-300 font-semibold;
+    font-weight: 600;
+    background-color: var(--accent-soft) !important;
+    border: 1px solid var(--accent-border) !important;
+    color: var(--accent) !important;
+    box-shadow: 0 0 16px var(--accent-glow);
   }
 
   /* Modals */
@@ -95,6 +169,16 @@ h4 {
   .modal-iframe {
     @apply h-full w-full;
   }
+}
+
+/* Dynamic Accent Text and Background Utilities */
+.accent-text {
+  color: var(--accent) !important;
+}
+
+.accent-bg-soft {
+  background-color: var(--accent-soft) !important;
+  border-color: var(--accent-border) !important;
 }
 
 /* Animations */

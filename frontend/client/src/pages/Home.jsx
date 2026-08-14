@@ -15,11 +15,15 @@ import {
   SiBootstrap,
   SiApache,
   SiHtml5,
-  SiCss
+  SiCss,
+  SiCloudinary,
+  SiTypescript
 } from "react-icons/si";
 import { sendContactMessage } from "../api";
 import ResumeModal from "../components/ResumeModal";
 import ShareModal from "../components/ShareModal";
+import CaseStudyModal from "../components/CaseStudyModal";
+import { FaLayerGroup, FaArrowRight } from "react-icons/fa";
 
 const getSlug = (item) =>
   item?.slug || (item?.name || item?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -39,6 +43,9 @@ export default function Home({ portfolio, status }) {
   const [activeProjectTech, setActiveProjectTech] = useState("All");
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState(null);
+  const [isCaseStudyModalOpen, setIsCaseStudyModalOpen] = useState(false);
+  const caseStudies = portfolio?.caseStudies || [];
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -188,7 +195,9 @@ export default function Home({ portfolio, status }) {
   const techLinks = {
     javascript: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
     react: "https://react.dev/",
+    "react 19": "https://react.dev/",
     "react.js (18)": "https://react.dev/",
+    typescript: "https://www.typescriptlang.org/",
     "node.js": "https://nodejs.org/",
     "node.js (24)": "https://nodejs.org/",
     node: "https://nodejs.org/",
@@ -210,8 +219,12 @@ export default function Home({ portfolio, status }) {
     c: "https://en.cppreference.com/w/c",
     vite: "https://vitejs.dev/",
     express: "https://expressjs.com/",
+    "express 5": "https://expressjs.com/",
     "express.js": "https://expressjs.com/",
     mongoose: "https://mongoosejs.com/",
+    jwt: "https://jwt.io/",
+    multer: "https://github.com/expressjs/multer",
+    cloudinary: "https://cloudinary.com/",
     redis: "https://redis.io/",
     kafka: "https://kafka.apache.org/",
     "socket.io": "https://socket.io/",
@@ -769,6 +782,29 @@ export default function Home({ portfolio, status }) {
                           Source Code
                         </a>
                       )}
+                      {(() => {
+                        const cs = caseStudies.find(
+                          (c) =>
+                            c.slug === slug ||
+                            c.slug.startsWith(slug) ||
+                            (c.project && c.project.toLowerCase().includes(project.name?.toLowerCase()))
+                        );
+                        if (!cs) return null;
+                        return (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedCaseStudy(cs);
+                              setIsCaseStudyModalOpen(true);
+                            }}
+                            className="btn-secondary flex items-center gap-1.5 border-amber-400/40 text-amber-300 hover:bg-amber-400 hover:text-slate-950 transition"
+                            title={`Read ${project.name} technical case study`}
+                          >
+                            ⚡ Case Study
+                          </button>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -1081,6 +1117,14 @@ export default function Home({ portfolio, status }) {
         onClose={() => setIsShareModalOpen(false)}
         name={hero.name}
         role={basics.role}
+      />
+      <CaseStudyModal
+        isOpen={isCaseStudyModalOpen}
+        onClose={() => {
+          setIsCaseStudyModalOpen(false);
+          setSelectedCaseStudy(null);
+        }}
+        caseStudy={selectedCaseStudy}
       />
     </>
   );

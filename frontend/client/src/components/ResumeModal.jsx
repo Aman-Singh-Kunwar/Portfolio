@@ -22,6 +22,26 @@ Computer Science student focused on building modern full stack web applications.
 
 ---
 
+## 🚀 FEATURED PROJECTS
+
+### Curriculum Management System (CMS) | Live: https://cms.dbuu.ac.in/
+- Institutional academic workflow & curriculum platform deployed across 12+ Schools, 30+ Departments, and 6,500+ Subjects at DBUU.
+- Built with React 19, TypeScript, Node.js, Express 5, MongoDB, Cloudinary, and JWT.
+- Implemented 4-tier scoped RBAC (SuperAdmin -> Dean -> HOD -> Faculty) and multi-stage syllabus approval state machine.
+
+### ADHYAN.AI — AI-Powered Smart Classroom | Live: https://adhyan-ai.onrender.com/
+- Automated assessment generation and source-grounded subjective grading using Gemini Flash APIs and RAG pipelines.
+- Implemented Real Exam Mode with browser tab-switch and activity monitoring for assessment integrity.
+
+### Eventory — High-Concurrency Ticketing Platform | GitHub: https://github.com/Aman-Singh-Kunwar/Eventory
+- High-concurrency event booking platform with Redis + Lua distributed atomic seat locking for zero overbooking guarantee.
+- Event-driven architecture with Kafka for asynchronous payment queues and Socket.IO for real-time seat status synchronization.
+
+### EcoCommute — AI Sustainable Transport Planner | GitHub: https://github.com/Aman-Singh-Kunwar/EcoCommute
+- Multimodal route optimization integrating OpenRouteService, Carbon Interface API, Leaflet maps, and Flask ML models.
+
+---
+
 ## 💼 WORK & INTERNSHIP EXPERIENCE
 
 ### Web Development Intern — Evon Technologies (June 2026 - August 2026)
@@ -45,6 +65,8 @@ Computer Science student focused on building modern full stack web applications.
 - Rank 47 / 403 Teams — HacktheWinter National Level Hackathon 2026 (GEHU Bhimtal X WeCode)
 - 1st Position Winner — Developathon Surge x DBUU 24-Hour National Hackathon
 - 1st Winner — Debug Arena (TechBug Challenge) by Evi Sphere Tech
+- Web Development Internship Certificate — Evon Technologies (August 2026)
+- Social Internship Certificate — Aasraa Trust (July 2025)
 `;
 
 export default function ResumeModal({ isOpen, onClose, resumeUrl = "/cv.pdf" }) {

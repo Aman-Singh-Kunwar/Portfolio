@@ -18,9 +18,14 @@ export function AuthProvider({ children }) {
     localStorage.setItem("admin_api_url", apiUrl);
   }, [apiUrl]);
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-accent", accentColor);
+    document.body.setAttribute("data-accent", accentColor);
+    localStorage.setItem("admin_accent_color", accentColor);
+  }, [accentColor]);
+
   const setAccentColor = useCallback((color) => {
     setAccentColorState(color);
-    localStorage.setItem("admin_accent_color", color);
   }, []);
 
   useEffect(() => {

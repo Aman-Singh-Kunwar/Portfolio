@@ -154,7 +154,7 @@ app.get("/sitemap.xml", async (req, res) => {
 
   const projectUrls = projects
     .map((p) => {
-      const slug = p.slug || p.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const slug = p?.slug || (p?.name || p?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
       return `  <url>
     <loc>${siteUrl}/projects/${slug}</loc>
     <lastmod>${now}</lastmod>
@@ -166,7 +166,7 @@ app.get("/sitemap.xml", async (req, res) => {
 
   const achievementUrls = achievements
     .map((a) => {
-      const slug = a.slug || a.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const slug = a?.slug || (a?.title || a?.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
       return `  <url>
     <loc>${siteUrl}/achievements/${slug}</loc>
     <lastmod>${now}</lastmod>

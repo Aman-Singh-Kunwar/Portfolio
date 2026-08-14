@@ -168,10 +168,14 @@ export default function DashboardPage() {
       {portfolioData && (
         <div className="card p-6 space-y-4">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-400 font-medium">Live Portfolio Overview</p>
-          <div className="grid gap-4 sm:grid-cols-4 text-xs">
+          <div className="grid gap-4 sm:grid-cols-5 text-xs">
             <div className="p-3 rounded-xl border border-white/5 bg-slate-900/40">
               <p className="text-slate-400">Total Projects</p>
               <p className="text-white font-semibold text-base mt-1">{projectCount}</p>
+            </div>
+            <div className="p-3 rounded-xl border border-white/5 bg-slate-900/40">
+              <p className="text-slate-400">Case Studies</p>
+              <p className="text-white font-semibold text-base mt-1">{portfolioData?.caseStudies?.length || 0}</p>
             </div>
             <div className="p-3 rounded-xl border border-white/5 bg-slate-900/40">
               <p className="text-slate-400">Achievements & Certs</p>

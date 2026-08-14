@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n \"backend,client,admin\" -c \"cyan,magenta,yellow\" \"npm --prefix backend run dev\" \"npm --prefix frontend/client run dev\" \"npm --prefix frontend/admin run dev\"",
-    "check": "npm --prefix backend run check"
+    "check": "npm --prefix backend run check",
+    "test": "npm --prefix backend test && npm --prefix frontend/client test && npm --prefix frontend/admin test"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

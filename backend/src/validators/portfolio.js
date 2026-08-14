@@ -185,6 +185,17 @@ export function validatePortfolioData(payload) {
   if (!Array.isArray(payload.education)) errors.push("education must be an array");
   if (!isPlainObject(payload.contact)) errors.push("contact must be an object");
 
+  if (Array.isArray(payload.caseStudies)) {
+    payload.caseStudies.forEach((cs, index) => {
+      if (!isPlainObject(cs)) {
+        errors.push(`caseStudies[${index}] must be an object`);
+        return;
+      }
+      if (!isNonEmptyString(cs.title)) errors.push(`caseStudies[${index}].title is required`);
+      if (!isNonEmptyString(cs.slug)) errors.push(`caseStudies[${index}].slug is required`);
+    });
+  }
+
   if (errors.length) {
     logger.warn("portfolio validation failed", {
       errors

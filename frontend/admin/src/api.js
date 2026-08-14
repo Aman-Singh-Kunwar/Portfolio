@@ -115,9 +115,9 @@ export async function updateMessageStatus(apiUrl, token, id, status) {
 export async function fetchVisits(apiUrl) {
   try {
     const response = await fetch(`${apiUrl}/api/visits`);
-    if (!response.ok) return { count: 0 };
+    if (!response.ok) return { count: 0, trends: [] };
     return response.json();
   } catch {
-    return { count: 0 };
+    return { count: 0, trends: [] };
   }
 }

@@ -61,10 +61,10 @@ export async function getVisitTrends() {
 
     return days.map((d) => ({
       date: d.date,
-      count: sessionMap.get(d.dayKey) || Math.floor(Math.random() * 8) + 2 // smooth fallbacks
+      count: sessionMap.get(d.dayKey) || 0
     }));
   } catch {
-    return days.map((d) => ({ date: d.date, count: Math.floor(Math.random() * 8) + 2 }));
+    return days.map((d) => ({ date: d.date, count: 0 }));
   }
 }
 

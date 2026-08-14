@@ -191,8 +191,8 @@
         "Vite",
         "Node.js (24)",
         "Express.js",
-        "MongoDB Atlas",
-        "Gemini-2.5-flash APIs"
+        "MongoDB",
+        "Gemini flash APIs"
       ],
       "image": "/images/adhyanai.jpg",
       "links": {
@@ -221,6 +221,33 @@
       "links": {
         "demo": "https://aman-singh-kunwar-portfolio1.onrender.com/",
         "repo": "https://github.com/Aman-Singh-Kunwar/Portfolio"
+      }
+    },
+    {
+      "name": "Curriculum Management System",
+      "slug": "curriculum-management-system",
+      "description": "Institutional academic workflow & curriculum management platform with 4-tier scoped RBAC, multi-stage syllabus approvals, and NBA/NAAC PO-PSO compliance tracking.",
+      "highlights": [
+        "Production deployment across 12+ Schools, 30+ Departments, and 6,500+ Subjects at DBUU",
+        "4-tier scoped authorization tree: SuperAdmin -> Dean (School) -> HOD (Dept/Year) -> Faculty (Subject)",
+        "Multi-stage approval state machine: Draft -> Submitted -> HOD Review -> Dean Approval -> Published",
+        "Automated PO/PSO document mapping, revision history logs, and role-based analytical dashboards"
+      ],
+      "tech": [
+        "React 19",
+        "TypeScript",
+        "Node.js",
+        "Express 5",
+        "MongoDB",
+        "Cloudinary",
+        "JWT",
+        "Tailwind CSS",
+        "Vite"
+      ],
+      "image": "/images/cms_dbuu.png",
+      "links": {
+        "demo": "https://cms.dbuu.ac.in/",
+        "repo": "https://github.com/Syllabus2-0/schoolsofdbuu"
       }
     },
     {
@@ -269,26 +296,6 @@
       "links": {
         "demo": "",
         "repo": "https://github.com/Aman-Singh-Kunwar/Eventory"
-      }
-    },
-    {
-      "name": "Simon Say Game",
-      "slug": "simon-say-game",
-      "description": "Interactive Simon Says memory game with enhanced gameplay features.",
-      "highlights": [
-        "Difficulty increases as the game progresses",
-        "Sound effects for each button",
-        "Score tracking for best performance"
-      ],
-      "tech": [
-        "HTML",
-        "CSS",
-        "JavaScript"
-      ],
-      "image": "/images/simonsaygame.jpg",
-      "links": {
-        "demo": "https://aman-singh-kunwar.github.io/Simon-say-game/",
-        "repo": "https://github.com/Aman-Singh-Kunwar/Simon-say-game"
       }
     }
   ],
@@ -394,6 +401,126 @@
         "/images/class12.jpg",
         "/images/class11.jpg"
       ]
+    }
+  ],
+  "caseStudies": [
+    {
+      "slug": "eventory-concurrency",
+      "project": "Eventory",
+      "title": "Zero-Overbooking Concurrency: Distributed Mutexes with Redis Lua & Kafka",
+      "tagline": "Handling 100,000+ requests/sec on single seats without database race conditions or deadlocks.",
+      "metrics": [
+        "100k req/s Scale",
+        "Zero Overbooking Guarantee",
+        "500 Concurrent Test Burst",
+        "5-Min TTL Mutex"
+      ],
+      "tags": [
+        "Redis",
+        "Lua Scripts",
+        "Kafka",
+        "Socket.IO",
+        "Node.js",
+        "Docker"
+      ],
+      "problem": "When popular events go on sale, thousands of users attempt to purchase the exact same seat at the exact same millisecond. Traditional check-then-update SQL/MongoDB queries create race conditions where multiple requests pass the availability check before any write is committed, leading to catastrophic double bookings.",
+      "architecture": [
+        "Atomic Single-Threaded Locking: Custom Lua script executes in Redis memory atomically, checking existence and setting user-bound key in one operation without CPU context switching.",
+        "Automatic Deadlock Prevention: Each lock is issued with a 5-minute TTL. If a user abandons payment or drops connection, the seat automatically returns to available status without manual cleanup.",
+        "Decoupled Async Message Queue: Confirmed bookings emit a Kafka 'booking.created' event for background payment consumer workers, preventing HTTP request timeout bottlenecks.",
+        "Real-Time WebSocket Grid Sync: Socket.IO rooms broadcast 'seat_locked', 'seat_processing', and 'seat_booked' events immediately to all connected browsers."
+      ],
+      "security": "Distributed locking prevents cross-server race conditions across multiple Node.js instances behind load balancers. Idempotent payment webhooks ensure transactions are processed safely.",
+      "takeaway": "Demonstrates production distributed systems engineering: combining fast in-memory locking (Redis), event streaming (Kafka), and persistent storage (MongoDB)."
+    },
+    {
+      "slug": "adhyan-ai-architecture",
+      "project": "ADHYAN.AI",
+      "title": "Smart Classroom AI: Source-Grounded OCR Grading, Device Binding & Rotating HMAC Tokens",
+      "tagline": "End-to-end AI assessment engine automating assessment generation, subjective grading, and anti-proxy attendance.",
+      "metrics": [
+        "Gemini 2.5 Flash Pipeline",
+        "70% Legibility OCR Guard",
+        "Slot-Based Device UUIDs",
+        "WebSocket Rotating HMAC QR"
+      ],
+      "tags": [
+        "Gemini 2.5 Flash",
+        "RAG",
+        "GridFS",
+        "WebSockets",
+        "HMAC-SHA256",
+        "React 18"
+      ],
+      "problem": "Digital education platforms struggle with three massive bottlenecks: teacher burnout from manual grading, unreliable hallucinating AI evaluators lacking source grounding, and rampant cheating (credential sharing & QR screenshot attendance proxies).",
+      "architecture": [
+        "RAG-Grounded Assessment Engine: Extracts structured content from uploaded PDF lecture notes via Gemini 2.5 Flash, generating tiered MCQs and subjective test papers strictly constrained to source material.",
+        "Physical Exam OCR & Legibility Guard: Evaluates scanned multi-page handwritten student answer sheets against rubric schemes. Calculates handwriting clarity (0-100%); scores below 70% automatically trigger human review flags.",
+        "Semantic Question Intent Mapping: Pairs unnumbered student answers to rubric questions by intent analysis and keyword depth, awarding partial credit fairly.",
+        "Multi-Key Resilient Failover: Automatically rotates across active Gemini API keys with backoff strategies to prevent rate limit interruptions during heavy batch grading."
+      ],
+      "security": "Anti-Proxy Device Binding restricts each student to 1 mobile and 1 desktop UUID token. Live attendance uses rotating HMAC-SHA256 tokens refreshed over WebSockets every few seconds to eliminate QR screenshot sharing.",
+      "takeaway": "Shows advanced applied AI system design: source grounding to prevent hallucinations, OCR quality controls, and multi-layered hardware/cryptographic anti-cheat mechanisms."
+    },
+    {
+      "slug": "curriculum-management-system",
+      "project": "Curriculum Management System (CMS)",
+      "title": "Enterprise Academic Workflow: 4-Tier Scoped RBAC & Multi-Stage State Machines",
+      "tagline": "Institutional academic workflow platform managing curriculum creation, NBA/NAAC PO-PSO compliance, and multi-tier approval queues.",
+      "metrics": [
+        "12+ Schools Live",
+        "30+ Departments",
+        "6,500+ Subjects Managed",
+        "4-Tier Scoped RBAC"
+      ],
+      "tags": [
+        "React 19",
+        "TypeScript",
+        "Node.js",
+        "Express 5",
+        "MongoDB",
+        "Cloudinary",
+        "JWT"
+      ],
+      "problem": "Universities with multiple schools and departments struggle with fragmented syllabus drafting, decentralized approval bottlenecks, and data leakage across unauthorized faculty or department scopes during accreditation audits (NBA/NAAC).",
+      "architecture": [
+        "Hierarchical Academic Domain Model: Enforces strict encapsulation across School -> Department -> Program -> Subject.",
+        "4-Tier Database-Enforced RBAC: SuperAdmin (global), Dean (school-scoped), HOD (department & assigned year-scoped), and Faculty (assigned subject-scoped). Role checks are enforced at controller and query levels.",
+        "Multi-Stage Approval State Machine: Governs the syllabus lifecycle: Draft -> Submitted -> HOD Review (Approve/Reject) -> Dean Final Stage (Approve/Publish or Reject) with revision history.",
+        "PO/PSO Outcome Mapping & Cloudinary Storage: Centralized outcome-based education document repository with versioned PDF storage."
+      ],
+      "security": "Scope isolation prevents cross-department privilege escalation. Immutable comment logs and timestamped digital approval records satisfy institutional audit requirements.",
+      "takeaway": "Proves capability to architect and deploy real-world enterprise SaaS: multi-tenant access control, strict compliance modeling, and production university adoption."
+    },
+    {
+      "slug": "ecocommute-ml-routing",
+      "project": "EcoCommute",
+      "title": "Multimodal Routing: Predicting Carbon Footprint & Traffic Delays with Flask ML",
+      "tagline": "AI-enabled sustainable transport planner optimizing for low-emission and time-efficient multimodal routes.",
+      "metrics": [
+        "1st Place Hackathon Winner",
+        "Multimodal Optimization",
+        "Real-Time Carbon API",
+        "Flask ML Microservice"
+      ],
+      "tags": [
+        "Python",
+        "Flask",
+        "scikit-learn",
+        "React",
+        "Leaflet",
+        "OpenRouteService",
+        "MongoDB"
+      ],
+      "problem": "Standard navigation engines optimize exclusively for time or distance, ignoring vehicle emission intensity, atmospheric weather hazards, and environmental impact.",
+      "architecture": [
+        "Composite Geospatial Routing Engine: Integrates OpenRouteService heuristics with live OpenWeather data to calculate multimodal travel alternatives (transit, carpooling, cycling).",
+        "Carbon Footprint & Eco-Score Engine: Connects to Carbon Interface APIs to estimate gram-per-kilometer emissions saved per route.",
+        "Predictive Traffic ML Microservice: Python Flask service with scikit-learn models predicting traffic congestion delays based on historical and temporal patterns.",
+        "Interactive Leaflet Visualizer: Real-time map rendering with custom color-coded eco-efficiency polylines."
+      ],
+      "security": "Containerized microservice architecture isolating Python ML workloads from the Node.js API gateway using Docker.",
+      "takeaway": "Demonstrates full-stack polyglot development: combining Node.js backend services with Python machine learning microservices and interactive mapping."
     }
   ],
   "contact": {

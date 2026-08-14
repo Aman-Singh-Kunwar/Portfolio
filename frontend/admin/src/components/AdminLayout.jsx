@@ -55,7 +55,7 @@ export default function AdminLayout() {
       >
         {/* Brand */}
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold shadow-lg">
+          <div className="grid h-9 w-9 place-items-center rounded-xl accent-bg-soft accent-text font-bold shadow-lg border">
             A
           </div>
           <div>
@@ -110,7 +110,7 @@ export default function AdminLayout() {
               </svg>
             </button>
             <div className="flex items-center gap-2">
-              <CurrentIcon className="h-4 w-4 text-amber-400" />
+              <CurrentIcon className="h-4 w-4 accent-text" />
               <h1 className="text-sm font-semibold text-white">
                 {currentPage?.label || "Admin"}
               </h1>

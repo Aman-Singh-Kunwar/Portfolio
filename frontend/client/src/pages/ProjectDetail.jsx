@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import CaseStudyModal from "../components/CaseStudyModal";
 
 const getSlug = (item) =>
   item?.slug || (item?.name || item?.title || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -7,9 +8,23 @@ const getSlug = (item) =>
 export default function ProjectDetail({ portfolio = {} }) {
   const { slug } = useParams();
   const projects = portfolio?.projects || [];
+  const caseStudies = portfolio?.caseStudies || [];
   const project = projects.find((item) => getSlug(item) === slug);
+  const caseStudy = caseStudies.find(
+    (cs) =>
+      cs.slug === slug ||
+      cs.slug.startsWith(slug) ||
+      (cs.project && cs.project.toLowerCase().includes(project?.name?.toLowerCase()))
+  );
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
+  const [isCaseStudyModalOpen, setIsCaseStudyModalOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.toLowerCase();
+      return hash === "#case-study" || hash === "#architecture";
+    }
+    return false;
+  });
   const [deviceMode, setDeviceMode] = useState("desktop");
 
   const setProjectFallbackImage = (event) => {
@@ -41,7 +56,9 @@ export default function ProjectDetail({ portfolio = {} }) {
   const techLinks = {
     javascript: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
     react: "https://react.dev/",
+    "react 19": "https://react.dev/",
     "react.js (18)": "https://react.dev/",
+    typescript: "https://www.typescriptlang.org/",
     "node.js": "https://nodejs.org/",
     "node.js (24)": "https://nodejs.org/",
     node: "https://nodejs.org/",
@@ -63,8 +80,12 @@ export default function ProjectDetail({ portfolio = {} }) {
     c: "https://en.cppreference.com/w/c",
     vite: "https://vitejs.dev/",
     express: "https://expressjs.com/",
+    "express 5": "https://expressjs.com/",
     "express.js": "https://expressjs.com/",
     mongoose: "https://mongoosejs.com/",
+    jwt: "https://jwt.io/",
+    multer: "https://github.com/expressjs/multer",
+    cloudinary: "https://cloudinary.com/",
     redis: "https://redis.io/",
     kafka: "https://kafka.apache.org/",
     "socket.io": "https://socket.io/",
@@ -181,14 +202,23 @@ export default function ProjectDetail({ portfolio = {} }) {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-4">
+              {caseStudy && (
+                <button
+                  type="button"
+                  onClick={() => setIsCaseStudyModalOpen(true)}
+                  className="btn-primary flex items-center gap-2 border-amber-400 bg-amber-400 text-slate-950 hover:bg-amber-300 transition font-semibold"
+                >
+                  ⚡ System Architecture & Case Study
+                </button>
+              )}
               {project.links?.demo && (
                 <>
                   <button
                     type="button"
                     onClick={() => setIsIframeModalOpen(true)}
-                    className="btn-primary flex items-center gap-2"
+                    className="btn-secondary flex items-center gap-2"
                   >
-                    ⚡ Test Live Demo (iFrame)
+                    📱 Test Live Demo (iFrame)
                   </button>
                   <a
                     href={project.links.demo}
@@ -321,6 +351,14 @@ export default function ProjectDetail({ portfolio = {} }) {
             />
           </div>
         </div>
+      )}
+
+      {caseStudy && (
+        <CaseStudyModal
+          isOpen={isCaseStudyModalOpen}
+          onClose={() => setIsCaseStudyModalOpen(false)}
+          caseStudy={caseStudy}
+        />
       )}
     </section>
   );
