@@ -11,14 +11,16 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 2 : undefined,
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   webServer: [
     {
       command: "node backend/server.js",
-      url: "http://localhost:4000/api/health",
+      url: "http://127.0.0.1:4000/api/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
+      stdout: "pipe",
+      stderr: "pipe",
       env: {
         PORT: "4000",
         ADMIN_TOKEN: "admin-secret-token",
@@ -26,20 +28,24 @@ export default defineConfig({
       }
     },
     {
-      command: "npm --prefix frontend/client run dev",
-      url: "http://localhost:5173",
+      command: "npm --prefix frontend/client run preview",
+      url: "http://127.0.0.1:5173",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000
+      timeout: 120_000,
+      stdout: "pipe",
+      stderr: "pipe"
     },
     {
-      command: "npm --prefix frontend/admin run dev",
-      url: "http://localhost:5174",
+      command: "npm --prefix frontend/admin run preview",
+      url: "http://127.0.0.1:5174",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000
+      timeout: 120_000,
+      stdout: "pipe",
+      stderr: "pipe"
     }
   ],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:5173",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure"

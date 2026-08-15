@@ -47,17 +47,17 @@ jobs:
       - name: Admin Frontend Architecture Tests
         run: npm --prefix frontend/admin test
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run Browser E2E Tests
-        run: npm run test:e2e
-
       - name: Build Client Production Bundle
         run: npm --prefix frontend/client run build
 
       - name: Build Admin Production Bundle
         run: npm --prefix frontend/admin run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Browser E2E Tests
+        run: npm run test:e2e
 
       - name: Validate Docker Compose Configuration
         run: docker compose config
