@@ -3,10 +3,12 @@ import { logger } from "../utils/logger.js";
 /**
  * Multi-tier cache service.
  * Uses Redis when available and falls back to local memory for development/tests.
+ * Includes in-flight promise deduplication (Single-Flight Pattern) to mitigate local cache stampedes.
  */
 class CacheService {
   constructor() {
     this.memoryStore = new Map();
+    this.inFlight = new Map();
     this.redisClient = null;
     this.isRedisReady = false;
   }
@@ -84,16 +86,37 @@ class CacheService {
     }
 
     this.memoryStore.clear();
+    this.inFlight.clear();
   }
 
+  /**
+   * Single-flight cache-aside accessor.
+   * If key is cached, returns immediately.
+   * If miss, deduplicates concurrent requests on the same key so only 1 factoryFn runs.
+   */
   async getOrSet(key, factoryFn, ttlSeconds = 300) {
     const cached = await this.get(key);
     if (cached !== null) {
       return cached;
     }
-    const fresh = await factoryFn();
-    await this.set(key, fresh, ttlSeconds);
-    return fresh;
+
+    // In-flight single-flight deduplication
+    if (this.inFlight.has(key)) {
+      return await this.inFlight.get(key);
+    }
+
+    const executionPromise = (async () => {
+      try {
+        const fresh = await factoryFn();
+        await this.set(key, fresh, ttlSeconds);
+        return fresh;
+      } finally {
+        this.inFlight.delete(key);
+      }
+    })();
+
+    this.inFlight.set(key, executionPromise);
+    return await executionPromise;
   }
 
   async close() {
@@ -107,6 +130,7 @@ class CacheService {
   stats() {
     return {
       size: this.memoryStore.size,
+      inFlightCount: this.inFlight.size,
       mode: this.isRedisReady ? "redis" : "in-memory"
     };
   }

@@ -290,4 +290,40 @@ describe("4. Multi-Tier Cache & In-Memory Fallback Behavior", () => {
 
     await cache.del(computeKey);
   });
+
+  test("Cache getOrSet performs single-flight deduplication on concurrent requests", async () => {
+    const concurrentKey = "test:concurrent:stampede";
+    let factoryInvocations = 0;
+
+    const slowFactory = async () => {
+      factoryInvocations += 1;
+      await new Promise((r) => setTimeout(r, 50));
+      return { timestamp: Date.now() };
+    };
+
+    // Fire 20 concurrent requests simultaneously on an empty cache key
+    const results = await Promise.all([
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60),
+      cache.getOrSet(concurrentKey, slowFactory, 60)
+    ]);
+
+    // All 10 requests must receive the exact same result
+    assert.equal(results.length, 10);
+    for (const res of results) {
+      assert.equal(res.timestamp, results[0].timestamp);
+    }
+    // Crucial: factory was only invoked ONCE, not 10 times!
+    assert.equal(factoryInvocations, 1, "Single-flight deduplication must execute factory exactly once for concurrent requests");
+
+    await cache.del(concurrentKey);
+  });
 });
+

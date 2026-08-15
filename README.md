@@ -55,6 +55,12 @@ flowchart TD
 
 ---
 
+## 🔒 Security & Defensive Controls
+
+For an overview of the timing attack protection, CORS allowlist, rate limiting, and session revocation models implemented in this repository, see [**SECURITY.md**](SECURITY.md).
+
+---
+
 ## ✨ Features & Architecture
 
 ### 🎨 1. Client Portfolio Website (`frontend/client`)
