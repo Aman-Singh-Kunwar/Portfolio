@@ -26,13 +26,13 @@ export default defineConfig({
       }
     },
     {
-      command: "npx --prefix frontend/client vite --host 0.0.0.0 --port 5173",
+      command: "npm --prefix frontend/client run dev",
       url: "http://localhost:5173",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000
     },
     {
-      command: "npx --prefix frontend/admin vite --host 0.0.0.0 --port 5174",
+      command: "npm --prefix frontend/admin run dev",
       url: "http://localhost:5174",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000
