@@ -32,6 +32,10 @@ async function writeJsonFile(filePath, data) {
 }
 
 export async function seedPortfolioFromFile() {
+  if (mongoose.connection.readyState !== 1) {
+    return null;
+  }
+
   const forceSeed = process.env.FORCE_SEED === "true";
   const existing = await Portfolio.findOne().lean();
   if (existing && !forceSeed) {
@@ -93,6 +97,17 @@ export async function getPortfolio() {
 
 export async function replacePortfolio(payload) {
   const validated = validatePortfolioData(payload);
+
+  if (mongoose.connection.readyState !== 1) {
+    await writeJsonFile(dataPath, validated);
+    await cache.del(CACHE_KEY);
+    logger.info("portfolio updated in local JSON file (database offline)", {
+      projects: validated.projects?.length || 0,
+      achievements: validated.achievements?.length || 0
+    });
+    return validated;
+  }
+
   const doc = await Portfolio.findOneAndUpdate(
     {},
     { data: validated },

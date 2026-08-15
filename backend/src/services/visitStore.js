@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import mongoose from "mongoose";
 import VisitCounter from "../models/VisitCounter.js";
 import VisitSession from "../models/VisitSession.js";
 import { HttpError } from "../utils/http.js";
@@ -6,6 +7,10 @@ import { logger } from "../utils/logger.js";
 
 const COUNTER_KEY = "portfolio";
 const SESSION_TTL_DAYS = 7;
+
+// In-memory fallback tracking for zero-config offline/local development
+let fallbackCount = 0;
+const fallbackSessions = new Set();
 
 function hashSessionId(sessionId) {
   return crypto.createHash("sha256").update(sessionId).digest("hex");
@@ -18,6 +23,10 @@ function getSessionExpiry() {
 }
 
 async function getOrCreateCounter() {
+  if (mongoose.connection.readyState !== 1) {
+    return { count: fallbackCount };
+  }
+
   return VisitCounter.findOneAndUpdate(
     { key: COUNTER_KEY },
     { $setOnInsert: { count: 0 } },
@@ -40,6 +49,10 @@ export async function getVisitTrends() {
     d.setDate(d.getDate() - i);
     const dayLabel = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
     days.push({ date: dayLabel, dayKey: d.toISOString().slice(0, 10), count: 0 });
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    return days.map((d) => ({ date: d.date, count: 0 }));
   }
 
   try {
@@ -74,6 +87,15 @@ export async function countVisitSession(sessionId) {
   }
 
   const sessionIdHash = hashSessionId(sessionId.trim());
+
+  if (mongoose.connection.readyState !== 1) {
+    if (fallbackSessions.has(sessionIdHash)) {
+      return { count: fallbackCount, counted: false };
+    }
+    fallbackSessions.add(sessionIdHash);
+    fallbackCount += 1;
+    return { count: fallbackCount, counted: true };
+  }
 
   try {
     await VisitSession.create({
