@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
+import ErrorBoundary from "./components/ErrorBoundary";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -15,26 +16,28 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          {/* Public */}
-          <Route path="/login" element={<LoginPage />} />
+        <ErrorBoundary>
+          <Routes>
+            {/* Public */}
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/editor/json" element={<JsonEditorPage />} />
-              <Route path="/editor/projects" element={<ProjectsPage />} />
-              <Route path="/editor/achievements" element={<AchievementsPage />} />
-              <Route path="/editor/experience" element={<ExperiencePage />} />
-              <Route path="/editor/skills" element={<SkillsPage />} />
-              <Route path="/messages" element={<MessagesPage />} />
+            {/* Protected */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/editor/json" element={<JsonEditorPage />} />
+                <Route path="/editor/projects" element={<ProjectsPage />} />
+                <Route path="/editor/achievements" element={<AchievementsPage />} />
+                <Route path="/editor/experience" element={<ExperiencePage />} />
+                <Route path="/editor/skills" element={<SkillsPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   );

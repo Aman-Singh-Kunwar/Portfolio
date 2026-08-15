@@ -5,6 +5,7 @@ import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
 import SeoManager from "./components/SeoManager.jsx";
 import ResumeModal from "./components/ResumeModal.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import Home from "./pages/Home.jsx";
 
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail.jsx"));
@@ -672,6 +673,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ErrorBoundary>
       <div className="min-h-screen">
         <SeoManager portfolio={portfolio} />
         <Header
@@ -708,6 +710,7 @@ export default function App() {
           resumeUrl={portfolio.basics?.resumeUrl}
         />
       </div>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

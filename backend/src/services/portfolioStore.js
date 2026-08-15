@@ -5,10 +5,13 @@ import Portfolio from "../models/Portfolio.js";
 import { HttpError } from "../utils/http.js";
 import { logger } from "../utils/logger.js";
 import { validatePortfolioData } from "../validators/portfolio.js";
+import { cache } from "./cache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataPath = path.resolve(__dirname, "../../../data/portfolio.json");
+const CACHE_KEY = "portfolio:full";
+const CACHE_TTL_SECONDS = 300; // 5 minutes
 
 async function readJsonFile(filePath) {
   try {
@@ -51,6 +54,8 @@ export async function seedPortfolioFromFile() {
     { upsert: true, new: true, setDefaultsOnInsert: true }
   ).lean();
 
+  await cache.del(CACHE_KEY);
+
   logger.info("portfolio seeded from JSON file", {
     projects: doc.data.projects?.length || 0,
     achievements: doc.data.achievements?.length || 0
@@ -60,10 +65,18 @@ export async function seedPortfolioFromFile() {
 }
 
 export async function getPortfolio() {
+  // Check in-memory / distributed cache first for sub-millisecond responses
+  const cached = await cache.get(CACHE_KEY);
+  if (cached) {
+    return cached;
+  }
+
   const doc = await Portfolio.findOne().lean();
   if (!doc) {
     throw new HttpError(404, "Portfolio not found");
   }
+
+  await cache.set(CACHE_KEY, doc.data, CACHE_TTL_SECONDS);
   return doc.data;
 }
 
@@ -76,6 +89,9 @@ export async function replacePortfolio(payload) {
   ).lean();
 
   await writeJsonFile(dataPath, doc.data);
+  // Invalidate cache immediately so changes reflect everywhere
+  await cache.del(CACHE_KEY);
+
   logger.info("portfolio replaced by admin update", {
     projects: doc.data.projects?.length || 0,
     achievements: doc.data.achievements?.length || 0

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "types/**/*.d.ts",
+    "backend/src/**/*.js",
+    "frontend/client/src/**/*.jsx",
+    "frontend/client/src/**/*.js",
+    "frontend/admin/src/**/*.jsx",
+    "frontend/admin/src/**/*.js"
+  ],
+  "exclude": ["node_modules", "dist", "coverage", "playwright-report"]
+}

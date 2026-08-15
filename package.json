@@ -5,9 +5,14 @@
   "scripts": {
     "dev": "concurrently -k -n \"backend,client,admin\" -c \"cyan,magenta,yellow\" \"npm --prefix backend run dev\" \"npm --prefix frontend/client run dev\" \"npm --prefix frontend/admin run dev\"",
     "check": "npm --prefix backend run check",
-    "test": "npm --prefix backend test && npm --prefix frontend/client test && npm --prefix frontend/admin test"
+    "typecheck": "npx tsc --noEmit",
+    "test": "npm --prefix backend test && npm --prefix frontend/client test && npm --prefix frontend/admin test",
+    "test:e2e": "playwright test -c e2e/playwright.config.js",
+    "test:e2e:ui": "playwright test -c e2e/playwright.config.js --ui"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@playwright/test": "^1.62.1",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.9.3"
   }
 }

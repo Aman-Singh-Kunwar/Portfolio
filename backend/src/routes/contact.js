@@ -4,37 +4,29 @@ import { createRateLimiter } from "../middleware/rateLimit.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
 import { asyncHandler, HttpError } from "../utils/http.js";
 import { logger } from "../utils/logger.js";
+import { ContactSubmissionSchema, StatusUpdateSchema } from "../validators/schemas.js";
 
 const router = express.Router();
 const contactLimiter = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 });
-
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 router.post(
   "/",
   contactLimiter,
   asyncHandler(async (req, res) => {
-    const { name, email, subject, message } = req.body || {};
-
-    const errors = [];
-    if (typeof name !== "string" || !name.trim()) errors.push("name is required");
-    if (typeof email !== "string" || !isValidEmail(email.trim())) errors.push("a valid email is required");
-    if (typeof subject !== "string" || !subject.trim()) errors.push("subject is required");
-    if (typeof message !== "string" || !message.trim()) errors.push("message is required");
-
-    if (errors.length > 0) {
-      throw new HttpError(400, "Validation failed", errors);
+    const parseResult = ContactSubmissionSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      const errorMessages = parseResult.error.issues.map((i) => i.message);
+      throw new HttpError(400, "Validation failed", errorMessages);
     }
 
+    const { name, email, subject, message } = parseResult.data;
     const ip = req.ip || req.socket.remoteAddress || "unknown";
 
     const saved = await ContactMessage.create({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      subject: subject.trim(),
-      message: message.trim(),
+      name,
+      email,
+      subject,
+      message,
       ip
     });
 
@@ -68,12 +60,14 @@ router.patch(
   requireAdmin,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { status } = req.body || {};
 
-    const validStatuses = ["new", "in_discussion", "interview_scheduled", "archived"];
-    if (!validStatuses.includes(status)) {
-      throw new HttpError(400, "Invalid lead status");
+    const parseResult = StatusUpdateSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "Invalid status payload";
+      throw new HttpError(400, errorMsg);
     }
+
+    const { status } = parseResult.data;
 
     const updated = await ContactMessage.findByIdAndUpdate(
       id,

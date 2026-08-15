@@ -1,9 +1,11 @@
 import express from "express";
+import crypto from "node:crypto";
 import { config } from "../config.js";
 import { generateAdminSessionToken } from "../utils/token.js";
 import { asyncHandler, HttpError } from "../utils/http.js";
 import { logger } from "../utils/logger.js";
-import crypto from "node:crypto";
+import { cache } from "../services/cache.js";
+import { LoginPayloadSchema } from "../validators/schemas.js";
 
 const router = express.Router();
 
@@ -21,11 +23,13 @@ function safeEqual(provided, expected) {
 router.post(
   "/login",
   asyncHandler(async (req, res) => {
-    const { token } = req.body || {};
-
-    if (!token || typeof token !== "string") {
-      throw new HttpError(400, "Admin token is required");
+    const parseResult = LoginPayloadSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.issues[0]?.message || "Invalid login request";
+      throw new HttpError(400, errorMsg);
     }
+
+    const { token } = parseResult.data;
 
     const expected = config.adminToken;
     if (!expected) {
@@ -38,6 +42,10 @@ router.post(
     }
 
     const session = generateAdminSessionToken();
+
+    // Store active session token in cache/Redis tier (24h TTL)
+    await cache.set(`session:${session.token}`, { issuedAt: Date.now() }, 86400);
+
     logger.info("admin logged in successfully, session token issued", { expiresAt: session.expiresAt });
 
     res.set("Cache-Control", "no-store");

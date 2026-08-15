@@ -40,6 +40,11 @@ const contactMessageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// High-performance compound indexes for recruiter CRM sorting & filtering
+contactMessageSchema.index({ status: 1, createdAt: -1 });
+contactMessageSchema.index({ email: 1 });
+contactMessageSchema.index({ createdAt: -1 });
+
 const ContactMessage = mongoose.model("ContactMessage", contactMessageSchema);
 
 export default ContactMessage;

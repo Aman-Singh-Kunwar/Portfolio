@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "check": "node --check server.js && node --check src/app.js && node --check src/db.js && node --check src/routes/portfolio.js && node --check src/routes/visits.js && node --check src/middleware/requireAdmin.js && node --check src/middleware/requestLogger.js && node --check src/validators/portfolio.js && node --check src/services/portfolioStore.js && node --check src/services/visitStore.js && node --check src/utils/logger.js",
+    "check": "node --check server.js && node --check src/app.js && node --check src/db.js && node --check src/routes/portfolio.js && node --check src/routes/visits.js && node --check src/middleware/requireAdmin.js && node --check src/middleware/requestLogger.js && node --check src/validators/portfolio.js && node --check src/validators/schemas.js && node --check src/services/portfolioStore.js && node --check src/services/visitStore.js && node --check src/utils/logger.js && node --check src/utils/metrics.js",
     "test": "node --test tests/**/*.test.js"
   },
   "engines": {
@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.8.0"
+    "mongoose": "^8.8.0",
+    "zod": "^3.24.1"
   }
 }

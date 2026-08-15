@@ -1,28 +1,58 @@
+# ==============================================================================
+# Monorepo .gitignore — Root, Backend, Client, Admin, E2E
+# ==============================================================================
+
 # Dependencies
 node_modules/
+**/node_modules/
 .pnp
 .pnp.js
 
-# Environment variables & secrets
+# Environment variables & secrets (Never commit secrets)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 backend/.env
 backend/.env.*
+!backend/.env.example
+frontend/client/.env
+frontend/client/.env.*
+!frontend/client/.env.example
+frontend/admin/.env
+frontend/admin/.env.*
+!frontend/admin/.env.example
 *.pem
 *.key
+*.cert
 
 # Build outputs
 dist/
+**/dist/
 dist-ssr/
-frontend/client/dist/
-frontend/admin/dist/
 *.tsbuildinfo
 
-# Logs & Debug
+# Playwright & Automated Test Artifacts
+playwright-report/
+**/playwright-report/
+test-results/
+**/test-results/
+blob-report/
+**/blob-report/
+playwright/.cache/
+**/.cache/
+coverage/
+**/coverage/
+.nyc_output/
+
+# Local Database & Docker Storage Volumes
+mongo-data/
+redis-data/
+data/db/
+dump/
+
+# Logs & Debugging
 logs/
+**/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -30,7 +60,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# OS & Editor files
+# Bundler & Framework Caches
+.vite/
+**/.vite/
+.turbo/
+.eslintcache
+.parcel-cache
+
+# Operating System & Editor Artifacts
 .DS_Store
 .DS_Store?
 ._*
@@ -38,11 +75,19 @@ lerna-debug.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
-.vscode/
+[Dd]esktop.ini
+
+# IDEs & Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.sublime-workspace
 *.sublime-project
+*.swp
+*.swo
 
-# Test coverage
-coverage/
-.nyc_output/
+# Temporary & Scratch Files
+*.tmp
+*.temp
+scratch/

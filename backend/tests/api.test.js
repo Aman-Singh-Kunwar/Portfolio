@@ -104,6 +104,26 @@ describe("Backend API Integration Tests", () => {
     assert.equal(Array.isArray(data.details), true);
   });
 
+  test("GET /api/docs/spec.json returns valid OpenAPI 3.0 specification", async () => {
+    const res = await fetch(`${baseUrl}/api/docs/spec.json`);
+    assert.equal(res.status, 200);
+    const spec = await res.json();
+    assert.equal(spec.openapi, "3.0.3");
+    assert.ok(spec.info?.title);
+    assert.ok(spec.paths["/api/portfolio"]);
+    assert.ok(spec.paths["/api/auth/login"]);
+    assert.ok(spec.paths["/api/contact"]);
+  });
+
+  test("GET /api/docs returns interactive Swagger UI HTML with dark theme", async () => {
+    const res = await fetch(`${baseUrl}/api/docs`);
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("content-type")?.includes("text/html"), true);
+    const html = await res.text();
+    assert.equal(html.includes("swagger-ui"), true);
+    assert.equal(html.includes("/api/docs/spec.json"), true);
+  });
+
   test("Non-existing API routes return standard 404 JSON response", async () => {
     const res = await fetch(`${baseUrl}/api/non-existent-endpoint`);
     assert.equal(res.status, 404);
