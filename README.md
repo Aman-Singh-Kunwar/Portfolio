@@ -91,6 +91,16 @@ flowchart TD
 
 ---
 
+## 🛠️ How This Was Built
+
+This project was built to serve as a production-grade personal portfolio and content management system, replacing static templates with a fully dynamic, self-hosted architecture. The core objective was to separate the public client from administrative tooling, enforce strict runtime schema contracts across the stack with Zod, and ensure that every feature is backed by automated tests (unit, integration, and Playwright E2E).
+
+I leveraged AI assistance as an active pair-programming tool throughout development. Specifically, AI was used to generate initial boilerplate for React management forms and tables, assist with Tailwind CSS styling and responsive layouts, write test fixtures and mock datasets, and help troubleshoot cross-platform CI edge cases (such as Linux CI runner working directory resolution, dual-stack IPv4/IPv6 port bindings, and OpenAPI 3.0 specs).
+
+Building this system provided hands-on experience with production-level full-stack concepts: implementing constant-time HMAC token verification (`crypto.timingSafeEqual`) to prevent timing attacks, building a resilient multi-tier caching layer with Redis and in-memory fallbacks, managing cache invalidation lifecycles on database mutations, and orchestrating a 5-service Docker Compose environment with automated container healthchecks.
+
+---
+
 ## 🛠️ Technology Stack
 
 - **Frontend**: React 18, Vite, React Router 7, Tailwind CSS, React Icons
