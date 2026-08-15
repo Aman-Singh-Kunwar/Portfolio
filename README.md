@@ -1,6 +1,6 @@
-# 🚀 Aman Singh Kunwar — Personal Portfolio & Admin Control Center
+# 🚀 Aman Singh Kunwar — Personal Portfolio & Admin Panel
 
-[![CI / Quality & Security Pipeline](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml)
 ![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?logo=node.js)
 ![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)
@@ -10,14 +10,14 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
 ![License](https://img.shields.io/badge/License-MIT-amber)
 
-A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and Admin Content Studio built with **React 18, Node.js/Express, TypeScript, Redis, MongoDB Atlas, and Tailwind CSS**. Features a public client site, interactive case study breakdowns, recruiter contact pipeline, self-documenting OpenAPI 3.0 explorer, Prometheus APM metrics, and a secure admin control center.
+A full-stack developer portfolio and admin dashboard built with **React 18, Node.js/Express, TypeScript, Redis, MongoDB Atlas, and Tailwind CSS**. Includes a public portfolio website, an admin panel for updating content and managing contact messages, OpenAPI (Swagger) documentation, Prometheus metrics, and automated tests (unit, integration, and Playwright E2E).
 
 ---
 
 ## 🔗 Live Links
 
 - **🌐 Live Client Portfolio**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
-- **🔐 Live Admin Control Center**: [https://aman-singh-kunwar-portfolio2.onrender.com/admin](https://aman-singh-kunwar-portfolio2.onrender.com/admin)
+- **🔐 Live Admin Panel**: [https://aman-singh-kunwar-portfolio2.onrender.com/admin](https://aman-singh-kunwar-portfolio2.onrender.com/admin)
 - **⚙️ Live Backend API / Swagger**: [https://aman-singh-kunwar-portfolio.onrender.com/api/docs](https://aman-singh-kunwar-portfolio.onrender.com/api/docs)
 - **🐙 GitHub Repository**: [https://github.com/Aman-Singh-Kunwar/Portfolio](https://github.com/Aman-Singh-Kunwar/Portfolio)
 
@@ -29,21 +29,21 @@ A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and A
 flowchart TD
     subgraph Clients["Frontend Layer (React 18 + Vite)"]
         Client["Public Portfolio Client\n(Port 5173 / SPA)"]
-        Admin["Admin Control Center\n(Port 5174 / CRM & Studio)"]
+        Admin["Admin Panel\n(Port 5174 / Content & Messages)"]
     end
 
-    subgraph Gateway["Backend API Gateway (Node.js 22 + Express)"]
-        Nginx["Nginx Reverse Proxy\n(SPA Routing + Asset Cache)"] --> Express["Express Application Gateway\n(Port 4000)"]
+    subgraph Gateway["Backend API (Node.js 22 + Express)"]
+        Nginx["Nginx Reverse Proxy\n(SPA Routing + Asset Cache)"] --> Express["Express Backend API\n(Port 4000)"]
         Express --> Auth["HMAC-SHA256 Auth\n(/api/auth/login, /logout)"]
-        Express --> Zod["Runtime Zod Validation\n(Schemas: Contact, Portfolio, Auth)"]
-        Express --> Telemetry["Observability Layer\n(Prometheus /api/metrics + X-Request-Id)"]
-        Express --> Swagger["OpenAPI 3.0 Explorer\n(/api/docs)"]
+        Express --> Zod["Runtime Zod Validation\n(Contact, Portfolio, Auth)"]
+        Express --> Telemetry["Observability\n(Prometheus /api/metrics + X-Request-Id)"]
+        Express --> Swagger["OpenAPI 3.0 Docs\n(/api/docs)"]
     end
 
     subgraph Data["Persistence & Caching Tier"]
-        Redis[("Redis 7 In-Memory Cache\n(5-min TTL + Active Session Store)")]
+        Redis[("Redis 7 Cache\n(5-min TTL + Active Session Store)")]
         Mongo[("MongoDB Atlas Database\n(ContactMessages, Portfolio, Visits)")]
-        LocalJSON[("data/portfolio.json\n(Local Zero-Config Fallback)")]
+        LocalJSON[("data/portfolio.json\n(Zero-Config File Fallback)")]
     end
 
     Client --> Nginx
@@ -55,54 +55,49 @@ flowchart TD
 
 ---
 
-## ✨ Features & Engineering Highlights
+## ✨ Features & Architecture
 
-### 🎨 1. Client Portfolio Site (`frontend/client`)
-- **Executive Career Timeline**: Glowing milestone nodes for work experience (Evon Technologies, Aasraa Trust) and education (B.Tech CSE - CGPA 9.29, 12th Board 93.6% - 18th Rank in State, 10th Board 96.2%).
-- **Interactive Skills Section**: Gradient progress bars categorized into **`Frontend`**, **`Backend & DB`**, and **`CMS & Core`**.
-- **Technical Case Studies Modal**: Deep architectural breakdowns of distributed systems (*Eventory*, *CMS*) with problem-solution strategies, metrics, and security tabs.
-- **Project & Certificate Lightboxes**: Fullscreen zoomable lightbox image modals with thumbnail navigation, prev/next buttons, and keyboard controls (Arrow keys, Esc).
-- **Interactive Resume Modal**: Inline PDF preview tab + ATS plain-text converter tab with 1-click copying.
-- **Multi-Platform Share Modal**: Share profile cards to WhatsApp, LinkedIn, Twitter/X, Email, or copy URL to clipboard.
-- **Google SEO & Microdata**: Dynamic Open Graph tags, JSON-LD microdata (`Person`, `WebSite`, `SoftwareSourceCode`), `sitemap.xml`, and `robots.txt`.
-- **Crash Recovery**: React Error Boundaries prevent white-screen crashes with styled fallback UI.
+### 🎨 1. Client Portfolio Website (`frontend/client`)
+- **Career & Education Timeline**: Interactive chronological view for work experience and education history.
+- **Skills Categorization**: Filterable technical skills grouped by `Frontend`, `Backend & DB`, and `CMS & Core`.
+- **Case Study Modals**: Structured breakdowns of engineering decisions, problem statements, solutions, and trade-offs for featured projects.
+- **Project & Certificate Lightboxes**: Image modal viewer with keyboard navigation (Esc, arrow keys) and thumbnail previews.
+- **Resume Modal**: Inline PDF preview tab and plain-text version for quick review and 1-click clipboard copy.
+- **Social Sharing**: Share modal for WhatsApp, LinkedIn, Twitter/X, Email, or direct URL copy.
+- **SEO & Structured Metadata**: Dynamic Open Graph tags, JSON-LD structured data (`Person`, `WebSite`), `sitemap.xml`, and `robots.txt`.
+- **Error Boundaries**: React Error Boundary wrappers to display graceful fallback states if a component fails.
 
-### 🛠️ 2. Admin Control Center (`frontend/admin`)
-- **🔐 HMAC Session Token Auth**: Secure `POST /api/auth/login` endpoint issuing 24-hour signed session tokens stored in Redis when available, with in-memory fallback for local development, plus `POST /api/auth/logout` session revocation.
-- **🎨 Matched Ambient Glow UI & Theme Customizer**: Sleek dark ambient gradients matching client UI + 1-click Accent Theme Switcher (**Amber**, **Emerald**, **Violet**, **Sky**, **Rose**).
-- **📦 Visual Projects Manager**: Visual grid view to add, edit, feature, or delete projects with live database sync.
-- **🏆 Achievements Manager**: Visual CRUD manager for hackathons, certifications, and milestone achievements with link previews.
-- **💼 Work Experience & Education Manager**: Edit internship bullet points, tech stack tags, university CGPA, and board exam scores visually.
-- **🛠️ Visual Skills Manager**: Visual editor with category groups and 0–100% proficiency sliders.
-- **📝 JSON Editor + Split Live Preview**: Code editor with syntax validation + side-by-side interactive Client iFrame Preview & Modal Preview.
-- **📩 Recruiter Inbox CRM**: Inbound hiring leads inbox with status pipeline tags (`🆕 New`, `💬 In Discussion`, `🎯 Interview Scheduled`, `📁 Archived`), mailto replies, and CSV export.
-- **📊 7-Day Live Traffic Bar Chart**: Real-time traffic analytics and daily visitor trend bar chart on the main Admin Dashboard.
+### 🛠️ 2. Admin Panel (`frontend/admin`)
+- **HMAC Session Authentication**: `POST /api/auth/login` generates signed HMAC session tokens stored with a 24-hour TTL in Redis/cache, paired with `POST /api/auth/logout` session revocation.
+- **Content Editors**: Visual management forms to update projects, achievements, experience, education, and skills.
+- **Raw JSON Editor**: Monaco/textarea editor with real-time JSON validation and live side-by-side preview.
+- **Contact Messages Dashboard**: Inbound message management interface with status tags (`New`, `In Discussion`, `Archived`), direct mailto actions, and CSV export.
+- **Basic Traffic Analytics**: 7-day visit counter and traffic summary chart on the main admin view.
+- **Theme Accent Switcher**: Customizable UI accent palette (Amber, Emerald, Violet, Sky, Rose).
 
 ### ⚙️ 3. Backend API Service (`backend`)
-- **RESTful Endpoints**: `/api/auth/login`, `/api/auth/logout`, `/api/portfolio`, `/api/contact`, `/api/contact/:id/status`, `/api/visits`, `/sitemap.xml`, `/api/metrics`, and `/api/health`.
-- **Interactive API Documentation**: Swagger/OpenAPI 3.0 explorer at `/api/docs` with full request/response schemas.
-- **Runtime Input Validation (Zod)**: Strict input validation and sanitization on all mutating endpoints.
-- **Distributed Caching (Redis + In-Memory)**: Real Redis adapter for shared cache/session storage with automatic in-memory fallback and cache invalidation on admin edits.
-- **Prometheus Telemetry**: Native Prometheus APM metrics export at `GET /api/metrics`.
-- **Security & Performance**: HMAC-SHA256 token verification, timing-safe equality checks (`crypto.timingSafeEqual`), CORS origin protection, IP rate limiting (`express-rate-limit`), and compression middleware.
-- **Observability**: `X-Request-Id` correlation headers on every response, ETag-based conditional requests (304 Not Modified), and structured cache control directives.
-- **Environment Validation**: Structured boot-time validation of all required environment variables with clear error tables on missing config.
+- **REST Endpoints**: `/api/portfolio`, `/api/auth/login`, `/api/auth/logout`, `/api/contact`, `/api/visits`, `/api/metrics`, `/sitemap.xml`, and `/api/health`.
+- **OpenAPI 3.0 Documentation**: Interactive Swagger explorer at `/api/docs` generated from OpenAPI specs.
+- **Runtime Validation (Zod)**: Schema validation on all mutating request payloads (contact messages, auth credentials, portfolio updates).
+- **Multi-Tier Caching (Redis + Memory)**: Redis adapter for session storage and caching with automatic in-memory fallback if Redis is unavailable, plus automatic cache invalidation on admin edits.
+- **Prometheus Metrics**: Metrics endpoint at `GET /api/metrics` tracking request latency, status codes, and endpoint counters.
+- **Security Middleware**: Constant-time token verification (`crypto.timingSafeEqual`), CORS origin allowlisting, IP rate limiting (`express-rate-limit`), security headers (`helmet` style), and gzip compression.
+- **Structured Error Handling**: Centralized error middleware with unique `X-Request-Id` correlation headers on every response.
 
-### 🐳 4. Docker Containerization & Healthchecks
-- **5-Service Stack**: One-command launch for `mongo`, `redis`, `backend`, `client`, and `admin` via `docker compose up -d`.
-- **Active Healthchecks**: Automated startup probes (`mongosh`, `redis-cli ping`) with `service_healthy` dependency ordering.
-- **Multi-Stage Builds**: Vite production builds served by nginx with SPA routing and aggressive static asset caching.
+### 🐳 4. Docker Containerization
+- **5-Service Compose Stack**: Orchestrates `mongo`, `redis`, `backend`, `client`, and `admin` with `docker compose up -d`.
+- **Healthchecks**: Automated startup probes (`mongosh ping`, `redis-cli ping`) with `service_healthy` container dependency ordering.
+- **Multi-Stage Builds**: Production Dockerfiles using Nginx for static frontend assets and lightweight Node.js Alpine base images for the backend.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend & UI**: React 18, TypeScript, Tailwind CSS, Vite, React Router 6, React Icons
-- **Backend & APIs**: Node.js 22, Express, Zod, Cryptography (HMAC-SHA256), Swagger/OpenAPI 3.0
-- **Database & Cache**: MongoDB Atlas, Mongoose, Redis 7 In-Memory Cache
-- **Testing Suite**: Playwright (E2E Browser Testing), Node.js Native Test Runner (Integration Tests)
-- **Infrastructure**: Docker, Docker Compose, Nginx, GitHub Actions CI/CD
-- **Deployment & Security**: Render, Compression, Rate Limiter, Helmet Security Headers
+- **Frontend**: React 18, Vite, React Router 7, Tailwind CSS, React Icons
+- **Backend**: Node.js 22, Express 4, Zod, Native Crypto (HMAC-SHA256), Swagger / OpenAPI 3.0
+- **Database & Cache**: MongoDB Atlas (Mongoose), Redis 7 (with in-memory fallback)
+- **Testing**: Playwright (E2E browser tests), Node.js native test runner (`node:test`)
+- **DevOps & Tooling**: Docker, Docker Compose, Nginx, TypeScript, GitHub Actions CI
 
 ---
 
@@ -113,37 +108,39 @@ Portfolio/
 ├── backend/
 │   ├── server.js              # Server entry point & graceful shutdown
 │   └── src/
-│       ├── app.js             # Express app, Prometheus metrics & Swagger UI
-│       ├── config.js          # ENV_SCHEMA startup validation
-│       ├── db.js              # Mongoose connection
-│       ├── docs/swagger.js    # OpenAPI 3.0 specification
-│       ├── middleware/        # Rate Limiter, Request Logger, requireAdmin
+│       ├── app.js             # Express app configuration & middleware pipeline
+│       ├── config.js          # Startup environment validation
+│       ├── db.js              # Mongoose connection & fallback seeding
+│       ├── docs/swagger.js    # OpenAPI 3.0 specification & Swagger UI
+│       ├── middleware/        # Rate limiter, request logger, security headers, requireAdmin
 │       ├── models/            # ContactMessage.js, Portfolio.js, VisitSession.js
 │       ├── routes/            # auth.js, portfolio.js, contact.js, visits.js
-│       ├── services/          # cache.js (Redis/Memory), portfolioStore.js
+│       ├── services/          # cache.js (Redis/Memory), portfolioStore.js, visitStore.js
 │       ├── utils/             # http.js, logger.js, metrics.js, token.js
-│       └── validators/        # schemas.js (Zod), portfolio.js
+│       └── validators/        # schemas.js (Zod schemas), portfolio.js
 ├── data/
-│   └── portfolio.json         # Master dataset (Projects, Achievements, Skills, Experience)
-├── e2e/                       # Playwright Browser Test Suite
+│   └── portfolio.json         # Default dataset (projects, experience, skills, education)
+├── e2e/                       # Playwright browser test suite
 │   ├── playwright.config.js   # Test runner & webServer orchestration
 │   └── tests/                 # homepage.spec.js, contact.spec.js, admin.spec.js
 ├── frontend/
-│   ├── client/                # Public Portfolio React App
+│   ├── client/                # Public portfolio React client
 │   │   ├── src/
-│   │   │   ├── components/    # SeoManager.jsx, ResumeModal.jsx, ShareModal.jsx
+│   │   │   ├── components/    # SeoManager, ResumeModal, ShareModal, CaseStudyModal
 │   │   │   ├── pages/         # Home.jsx, ProjectDetail.jsx, AchievementDetail.jsx
 │   │   │   └── App.jsx
-│   └── admin/                 # Admin Control Center
+│   │   └── package.json
+│   └── admin/                 # Admin management panel
 │       ├── src/
 │       │   ├── components/    # AdminLayout.jsx, ProtectedRoute.jsx, Icons.jsx
 │       │   ├── context/       # AuthContext.jsx
-│       │   ├── pages/         # DashboardPage.jsx, ProjectsPage.jsx, AchievementsPage.jsx, MessagesPage.jsx
+│       │   ├── pages/         # DashboardPage, ProjectsPage, AchievementsPage, MessagesPage
 │       │   └── App.jsx
-│   types/
-│   └── portfolio.d.ts         # Shared cross-stack TypeScript contracts
-├── docker-compose.yml         # 5-Service Docker Orchestration
-├── tsconfig.json              # Workspace TypeScript configuration
+│       └── package.json
+├── types/
+│   └── portfolio.d.ts         # Shared TypeScript contracts
+├── docker-compose.yml         # 5-Service Docker Compose setup
+├── tsconfig.json              # TypeScript configuration
 └── README.md
 ```
 
@@ -151,7 +148,7 @@ Portfolio/
 
 ## 🚀 Quick Start Guide
 
-### 🐳 Option A: Docker (Recommended — One Command)
+### 🐳 Option A: Docker Compose (Recommended)
 
 ```bash
 docker compose up -d --build
@@ -167,14 +164,14 @@ docker compose up -d --build
 
 ---
 
-### 🛠️ Option B: Manual Setup
+### 🛠️ Option B: Local Setup
 
 #### Prerequisites
 - Node.js (v22+)
-- MongoDB Atlas or local MongoDB instance
-- Redis (Optional — automatic in-memory fallback enabled)
+- MongoDB (Atlas or local instance; optional in dev — falls back to `data/portfolio.json`)
+- Redis (optional in dev — falls back to in-memory cache)
 
-### 1. Backend API Service
+### 1. Backend Service
 
 ```bash
 cd backend
@@ -182,7 +179,7 @@ npm install
 npm run dev
 ```
 
-Create `backend/.env`:
+Create `backend/.env` (optional in dev):
 
 ```env
 PORT=4000
@@ -204,9 +201,9 @@ npm install
 npm run dev
 ```
 
-App runs locally at `http://localhost:5173`.
+Runs locally at `http://localhost:5173`.
 
-### 3. Admin Control Center
+### 3. Admin Panel
 
 ```bash
 cd frontend/admin
@@ -214,19 +211,19 @@ npm install
 npm run dev
 ```
 
-App runs locally at `http://localhost:5174`.
+Runs locally at `http://localhost:5174`.
 
 ---
 
-## 🧪 Testing Suite & Quality Verification
+## 🧪 Testing Suite
 
-This repository maintains **30 automated tests** across all architectural layers:
+This repository includes automated tests covering backend API endpoints, frontend architecture, and browser user flows:
 
 ```bash
-# 1. Run Unit & Integration Tests (22 tests across Backend, Client, Admin)
+# 1. Run Unit & Integration Tests (Backend, Client, Admin)
 npm test
 
-# 2. Run Playwright E2E Browser Tests (8 tests in real Chromium)
+# 2. Run Playwright E2E Browser Tests
 npm run test:e2e
 
 # 3. Launch Interactive Playwright UI Studio
@@ -235,29 +232,26 @@ npm run test:e2e:ui
 # 4. Run TypeScript Typecheck
 npm run typecheck
 
-# 5. Run Syntax & Architecture Checks
+# 5. Run Syntax Checks
 npm run check
 ```
 
 ---
 
-## 🧪 CI/CD Pipeline
+## 🔄 CI Pipeline
 
-Continuous Integration is automated via **GitHub Actions** (`.github/workflows/ci.yml`). On every push to `main`, GitHub:
-1. Sets up Node.js 22 environment.
-2. Installs dependencies across Root, Backend, Client, and Admin.
-3. Executes Node.js syntax checks (`node --check`).
-4. Runs workspace TypeScript typecheck (`tsc --noEmit`).
-5. Executes all 22 unit/integration tests.
-6. Installs Chromium and runs Playwright E2E tests against local client/admin servers.
-7. Builds production client and admin Vite bundles.
-8. Validates Docker Compose multi-service configuration (`docker compose config`).
-9. Executes dependency vulnerability audits (`npm audit --audit-level=high`).
+Continuous Integration runs on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) on every push to `main`:
+1. **Dependency Installation**: Clean install across root, backend, client, and admin workspaces.
+2. **Syntax Validation**: `node --check` validation across all backend modules.
+3. **Type Safety**: `tsc --noEmit` validation against shared TypeScript contracts.
+4. **Integration Tests**: Node.js test runner executing backend and frontend unit/integration test suites.
+5. **Production Builds**: `vite build` compilation for both client and admin SPAs.
+6. **E2E Browser Tests**: Playwright launching Chromium and executing real user flows against preview servers.
+7. **Container Config Validation**: `docker compose config` validation.
+8. **Security Audit**: Dependency vulnerability scan (`npm audit --audit-level=high`).
 
 ---
 
 ## 📄 License
 
-MIT License — Aman Singh Kunwar
-
-This repository is open-source and available under the [MIT License](LICENSE).
+MIT License — [LICENSE](LICENSE)
