@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "allowJs": true,
     "checkJs": false,
@@ -15,11 +16,10 @@
   },
   "include": [
     "types/**/*.d.ts",
-    "backend/src/**/*.js",
-    "frontend/client/src/**/*.jsx",
-    "frontend/client/src/**/*.js",
-    "frontend/admin/src/**/*.jsx",
-    "frontend/admin/src/**/*.js"
+    "frontend/client/src/**/*.ts",
+    "frontend/client/src/**/*.tsx",
+    "frontend/admin/src/**/*.ts",
+    "frontend/admin/src/**/*.tsx"
   ],
-  "exclude": ["node_modules", "dist", "coverage", "playwright-report"]
+  "exclude": ["node_modules", "**/node_modules/*", "dist", "**/dist/*", "coverage", "playwright-report"]
 }
