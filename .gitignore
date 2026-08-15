@@ -93,4 +93,6 @@ Thumbs.db
 scratch/
 
 #local docs
-docs/
+docs/HMAC_SESSION_AUTH.md
+docs/REDIS_CACHING_TIER.md
+docs/ZOD_VALIDATION_LAYER.md

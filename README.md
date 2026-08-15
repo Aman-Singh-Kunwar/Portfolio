@@ -53,6 +53,8 @@ flowchart TD
     Mongo -.-> LocalJSON
 ```
 
+> 📖 **Deeper architecture write-ups**: see [`docs/architecture/`](docs/architecture) for detailed breakdowns of the auth, caching, and validation layers.
+
 ---
 
 ## 🔒 Security & Defensive Controls
