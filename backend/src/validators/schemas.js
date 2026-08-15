@@ -1,19 +1,19 @@
 import { z } from "zod";
 
 /**
- * Enterprise Runtime Validation Schemas via Zod
+ * Runtime Validation Schemas via Zod
  * Ensures strict typing, payload sanitization, and descriptive API error responses
  */
 
 export const LoginPayloadSchema = z.object({
-  token: z.string().min(1, "Admin authentication token is required").trim()
+  token: z.string().trim().min(1, "Admin authentication token is required")
 });
 
 export const ContactSubmissionSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(100).trim(),
-  email: z.string().email("A valid email address is required").trim().toLowerCase(),
-  subject: z.string().min(2, "Subject must be at least 2 characters").max(200).trim(),
-  message: z.string().min(10, "Message must be at least 10 characters").max(5000).trim()
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().trim().email("A valid email address is required").toLowerCase(),
+  subject: z.string().trim().min(2, "Subject must be at least 2 characters").max(200),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(5000)
 });
 
 export const StatusUpdateSchema = z.object({

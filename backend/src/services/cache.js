@@ -86,6 +86,16 @@ class CacheService {
     this.memoryStore.clear();
   }
 
+  async getOrSet(key, factoryFn, ttlSeconds = 300) {
+    const cached = await this.get(key);
+    if (cached !== null) {
+      return cached;
+    }
+    const fresh = await factoryFn();
+    await this.set(key, fresh, ttlSeconds);
+    return fresh;
+  }
+
   async close() {
     if (this.redisClient) {
       await this.redisClient.quit();
