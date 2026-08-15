@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Admin Panel & CRM E2E Flow", () => {
-  const adminBaseUrl = process.env.PLAYWRIGHT_ADMIN_URL || "http://127.0.0.1:5174";
+  const adminBaseUrl = process.env.PLAYWRIGHT_ADMIN_URL || "http://localhost:5174";
   const testAdminToken = process.env.ADMIN_TOKEN || "admin-secret-token";
 
   test("redirects unauthenticated users to login page", async ({ page }) => {
