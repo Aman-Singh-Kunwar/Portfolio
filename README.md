@@ -16,8 +16,8 @@ A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and A
 
 ## 🔗 Live Links
 
-- **🌐 Live Portfolio Application**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
-- **🏛️ Curriculum Management System**: [https://cms.dbuu.ac.in/](https://cms.dbuu.ac.in/)
+- **🌐 Live Client Portfolio**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
+- **🔐 Live Admin Control Center**: [https://aman-singh-kunwar-portfolio2.onrender.com/admin](https://aman-singh-kunwar-portfolio2.onrender.com/admin)
 - **🐙 GitHub Repository**: [https://github.com/Aman-Singh-Kunwar/Portfolio](https://github.com/Aman-Singh-Kunwar/Portfolio)
 
 ---
