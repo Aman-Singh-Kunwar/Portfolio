@@ -15,10 +15,10 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   webServer: [
     {
-      command: "npm --prefix backend run dev",
+      command: "node backend/server.js",
       url: "http://127.0.0.1:4000/api/health",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 60_000,
       env: {
         PORT: "4000",
         ADMIN_TOKEN: "admin-secret-token",
@@ -26,16 +26,16 @@ export default defineConfig({
       }
     },
     {
-      command: "npm --prefix frontend/client run dev -- --host 127.0.0.1",
+      command: "npm --prefix frontend/client run dev -- --host 127.0.0.1 --port 5173",
       url: "http://127.0.0.1:5173",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000
+      timeout: 60_000
     },
     {
-      command: "npm --prefix frontend/admin run dev -- --host 127.0.0.1",
+      command: "npm --prefix frontend/admin run dev -- --host 127.0.0.1 --port 5174",
       url: "http://127.0.0.1:5174",
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000
+      timeout: 60_000
     }
   ],
   use: {
