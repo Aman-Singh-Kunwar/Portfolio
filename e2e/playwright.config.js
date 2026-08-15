@@ -15,6 +15,17 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   webServer: [
     {
+      command: "npm --prefix backend run dev",
+      url: "http://127.0.0.1:4000/api/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+      env: {
+        PORT: "4000",
+        ADMIN_TOKEN: "admin-secret-token",
+        NODE_ENV: "development"
+      }
+    },
+    {
       command: "npm --prefix frontend/client run dev -- --host 127.0.0.1",
       url: "http://127.0.0.1:5173",
       reuseExistingServer: !process.env.CI,
