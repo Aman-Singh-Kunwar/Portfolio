@@ -1,8 +1,8 @@
 import { logger } from "../utils/logger.js";
 
 /**
- * Enterprise Multi-Tier Caching Service
- * Supports In-Memory fast cache with optional distributed Redis adapter
+ * Multi-tier cache service.
+ * Uses Redis when available and falls back to local memory for development/tests.
  */
 class CacheService {
   constructor() {
@@ -18,16 +18,30 @@ class CacheService {
     }
 
     try {
-      // Optional dynamic import for redis if available
-      logger.info("cache", { mode: "redis", url: redisUrl });
-      this.isRedisReady = false;
+      const { createClient } = await import("redis");
+      this.redisClient = createClient({ url: redisUrl });
+
+      this.redisClient.on("error", (error) => {
+        this.isRedisReady = false;
+        logger.warn("cache: redis client error, using in-memory fallback", { error: error.message });
+      });
+
+      await this.redisClient.connect();
+      this.isRedisReady = true;
+      logger.info("cache", { mode: "redis", message: "Redis cache connected" });
     } catch (err) {
       logger.warn("cache: redis connection failed, fallback to in-memory", { error: err.message });
+      this.redisClient = null;
       this.isRedisReady = false;
     }
   }
 
   async get(key) {
+    if (this.isRedisReady && this.redisClient) {
+      const raw = await this.redisClient.get(key);
+      return raw ? JSON.parse(raw) : null;
+    }
+
     const entry = this.memoryStore.get(key);
     if (!entry) return null;
 
@@ -40,16 +54,44 @@ class CacheService {
   }
 
   async set(key, value, ttlSeconds = 300) {
+    if (this.isRedisReady && this.redisClient) {
+      const serialized = JSON.stringify(value);
+      if (ttlSeconds > 0) {
+        await this.redisClient.set(key, serialized, { EX: ttlSeconds });
+      } else {
+        await this.redisClient.set(key, serialized);
+      }
+      return;
+    }
+
     const expiresAt = ttlSeconds > 0 ? Date.now() + ttlSeconds * 1000 : null;
     this.memoryStore.set(key, { value, expiresAt });
   }
 
   async del(key) {
+    if (this.isRedisReady && this.redisClient) {
+      await this.redisClient.del(key);
+      return;
+    }
+
     this.memoryStore.delete(key);
   }
 
   async flush() {
+    if (this.isRedisReady && this.redisClient) {
+      await this.redisClient.flushDb();
+      return;
+    }
+
     this.memoryStore.clear();
+  }
+
+  async close() {
+    if (this.redisClient) {
+      await this.redisClient.quit();
+      this.redisClient = null;
+      this.isRedisReady = false;
+    }
   }
 
   stats() {

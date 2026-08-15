@@ -18,8 +18,10 @@ export const config = {
   env: process.env.NODE_ENV || "development",
   port: parsePositiveInt(process.env.PORT, 4000),
   mongoUri: process.env.MONGO_URI,
+  redisUrl: process.env.REDIS_URL,
   adminToken: process.env.ADMIN_TOKEN,
   corsOrigins: parseList(process.env.CORS_ORIGINS),
+  apiUrl: process.env.API_URL || "https://aman-singh-kunwar-portfolio.onrender.com",
   clientUrl: process.env.CLIENT_URL || "https://aman-singh-kunwar-portfolio1.onrender.com/",
   adminUrl: process.env.ADMIN_URL || "https://aman-singh-kunwar-portfolio2.onrender.com/",
   bodyLimit: process.env.JSON_BODY_LIMIT || "1mb",
@@ -30,8 +32,10 @@ export const config = {
 
 const ENV_SCHEMA = [
   { key: "MONGO_URI",     value: config.mongoUri,    required: true,  description: "MongoDB connection string" },
+  { key: "REDIS_URL",     value: config.redisUrl,    required: false, description: "Optional Redis cache connection string" },
   { key: "ADMIN_TOKEN",   value: config.adminToken,  required: true,  description: "Secret token for admin authentication" },
   { key: "CORS_ORIGINS",  value: config.corsOrigins.length > 0 ? "set" : "", required: false, description: "Comma-separated allowed origins" },
+  { key: "API_URL",       value: config.apiUrl,       required: false, description: "Public backend API URL" },
   { key: "CLIENT_URL",    value: config.clientUrl,    required: false, description: "Public client application URL" },
   { key: "ADMIN_URL",     value: config.adminUrl,     required: false, description: "Admin panel application URL" },
   { key: "PORT",          value: config.port,          required: false, description: "HTTP server port (default: 4000)" },

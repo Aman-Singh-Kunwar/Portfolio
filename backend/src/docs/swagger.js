@@ -2,7 +2,7 @@ import { config } from "../config.js";
 
 export function getSwaggerSpec() {
   const serverUrl = config.env === "production"
-    ? "https://aman-singh-kunwar-portfolio1.onrender.com"
+    ? config.apiUrl
     : `http://localhost:${config.port}`;
 
   return {
@@ -18,7 +18,7 @@ RESTful API service powering the portfolio client, admin control center, and rec
 ---
 
 ### Core Specifications
-1. **HMAC-SHA256 Authentication**: Authenticated endpoints (\`PUT /api/portfolio\`, \`GET /api/contact\`, etc.) require a signed session token in the \`Authorization: Bearer <token>\` header.
+1. **HMAC-SHA256 Authentication**: Authenticated endpoints (\`PUT /api/portfolio\`, \`GET /api/contact\`, etc.) require a signed session token in the \`Authorization: Bearer <token>\` header. Signed sessions are stored in Redis when available, with in-memory fallback for local development.
 2. **Conditional Caching & ETags**: \`GET /api/portfolio\` supports MD5 content hashing. If unchanged, the server returns \`304 Not Modified\` with zero payload.
 3. **Rate Limiting**: Sliding-window limiter allows up to 120 requests/minute per IP with strict limits on contact inquiries.
 4. **Request Correlation**: Each request is assigned a unique UUID \`X-Request-Id\` in response headers for distributed logging.
@@ -28,9 +28,10 @@ RESTful API service powering the portfolio client, admin control center, and rec
 
 ### Authentication Guide
 1. Send a \`POST /api/auth/login\` request with your admin token.
-2. Copy the returned \`sessionToken\`.
+2. Copy the returned \`token\`.
 3. Click **Authorize** in the top right corner.
 4. Paste the token and confirm. Protected endpoints will execute authenticated.
+5. Send \`POST /api/auth/logout\` with the Bearer token to revoke the cached session.
       `,
       contact: {
         name: "Aman Singh Kunwar",
@@ -48,7 +49,7 @@ RESTful API service powering the portfolio client, admin control center, and rec
         description: config.env === "production" ? "Production API Gateway (Render Cloud)" : "Local Development Server"
       },
       {
-        url: "https://aman-singh-kunwar-portfolio1.onrender.com",
+        url: config.apiUrl,
         description: "Live Production Cloud Gateway"
       }
     ],
@@ -147,6 +148,38 @@ RESTful API service powering the portfolio client, admin control center, and rec
                 "application/json": {
                   schema: { $ref: "#/components/schemas/ErrorResponse" },
                   example: { error: "Invalid admin token" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/logout": {
+        post: {
+          tags: ["Authentication"],
+          summary: "Revoke Admin Session",
+          description: "Deletes the active signed admin session from Redis/cache so the token can no longer access protected endpoints.",
+          security: [{ BearerAuth: [] }],
+          responses: {
+            200: {
+              description: "Session revoked",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean", example: true },
+                      message: { type: "string", example: "Session revoked." }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: "Unauthorized or already expired/revoked session",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/ErrorResponse" }
                 }
               }
             }

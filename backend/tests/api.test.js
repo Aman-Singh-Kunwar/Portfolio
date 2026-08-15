@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import http from "node:http";
 import app from "../src/app.js";
 import { config } from "../src/config.js";
+import { cache } from "../src/services/cache.js";
 import { generateAdminSessionToken, verifyAdminSessionToken } from "../src/utils/token.js";
 
 let server;
@@ -25,6 +26,7 @@ before(async () => {
 });
 
 after(async () => {
+  await cache.flush();
   if (server) {
     await new Promise((resolve) => server.close(resolve));
   }
@@ -70,6 +72,7 @@ describe("Backend API Integration Tests", () => {
     assert.equal(typeof data.token, "string");
     assert.equal(data.token.split(".").length, 3);
     assert.equal(typeof data.expiresAt, "number");
+    assert.ok(await cache.get(`session:${data.token}`), "Issued session must be stored in cache");
   });
 
   test("POST /api/auth/login with invalid token rejects with 401 Unauthorized", async () => {
@@ -89,6 +92,29 @@ describe("Backend API Integration Tests", () => {
     assert.equal(typeof session.token, "string");
     assert.equal(verifyAdminSessionToken(session.token), true);
     assert.equal(verifyAdminSessionToken("invalid.tampered.token"), false);
+  });
+
+  test("POST /api/auth/logout revokes cached admin session", async () => {
+    const loginRes = await fetch(`${baseUrl}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: config.adminToken })
+    });
+    assert.equal(loginRes.status, 200);
+    const { token } = await loginRes.json();
+
+    const logoutRes = await fetch(`${baseUrl}/api/auth/logout`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    assert.equal(logoutRes.status, 200);
+    assert.equal(await cache.get(`session:${token}`), null);
+
+    const secondLogoutRes = await fetch(`${baseUrl}/api/auth/logout`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    assert.equal(secondLogoutRes.status, 401);
   });
 
   test("POST /api/contact rejects missing required fields with 400 Validation Error", async () => {

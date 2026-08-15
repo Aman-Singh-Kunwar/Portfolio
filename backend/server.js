@@ -1,6 +1,7 @@
 import app from "./src/app.js";
 import { config, validateConfig } from "./src/config.js";
 import { connectAndSeed, disconnectDatabase } from "./src/db.js";
+import { cache } from "./src/services/cache.js";
 import { logger } from "./src/utils/logger.js";
 
 validateConfig();
@@ -18,17 +19,19 @@ function shutdown(signal) {
   if (server) {
     server.close(async () => {
       await disconnectDatabase();
+      await cache.close();
       process.exit(0);
     });
   } else {
-    disconnectDatabase().then(() => process.exit(0));
+    Promise.all([disconnectDatabase(), cache.close()]).then(() => process.exit(0));
   }
 }
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
 
-connectAndSeed(config.mongoUri)
+cache.init(config.redisUrl)
+  .then(() => connectAndSeed(config.mongoUri))
   .then(() => {
     server = app.listen(config.port, () => {
       logger.info("API listening", {

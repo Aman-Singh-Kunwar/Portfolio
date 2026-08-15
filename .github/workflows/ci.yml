@@ -47,6 +47,12 @@ jobs:
       - name: Run Admin Frontend Architecture Tests
         run: npm --prefix frontend/admin test
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Browser E2E Tests
+        run: npm run test:e2e
+
       - name: Build Client Production Bundle
         run: npm --prefix frontend/client run build
 
@@ -56,5 +62,14 @@ jobs:
       - name: Validate Docker Compose Configuration
         run: docker compose config
 
-      - name: Dependency Security Audit
+      - name: Root Dependency Security Audit
         run: npm audit --audit-level=high
+
+      - name: Backend Dependency Security Audit
+        run: npm --prefix backend audit --audit-level=high
+
+      - name: Client Dependency Security Audit
+        run: npm --prefix frontend/client audit --audit-level=high
+
+      - name: Admin Dependency Security Audit
+        run: npm --prefix frontend/admin audit --audit-level=high

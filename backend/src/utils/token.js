@@ -3,6 +3,17 @@ import { config } from "../config.js";
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
+function safeEqual(a, b) {
+  const aBuffer = Buffer.from(a);
+  const bBuffer = Buffer.from(b);
+
+  if (aBuffer.length !== bBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(aBuffer, bBuffer);
+}
+
 export function generateAdminSessionToken() {
   const secret = config.adminToken;
   if (!secret) {
@@ -23,13 +34,8 @@ export function verifyAdminSessionToken(providedToken) {
   const secret = config.adminToken;
   if (!secret || !providedToken) return false;
 
-  // Check raw token match (legacy fallback)
-  const rawProvidedBuffer = Buffer.from(providedToken);
-  const rawSecretBuffer = Buffer.from(secret);
-  if (
-    rawProvidedBuffer.length === rawSecretBuffer.length &&
-    crypto.timingSafeEqual(rawProvidedBuffer, rawSecretBuffer)
-  ) {
+  // Raw token access is useful locally, but production should use issued sessions.
+  if (config.env !== "production" && safeEqual(providedToken, secret)) {
     return true;
   }
 
@@ -47,12 +53,16 @@ export function verifyAdminSessionToken(providedToken) {
   const payload = `${issuedAtStr}.${expiresAtStr}`;
   const expectedHmac = crypto.createHmac("sha256", secret).update(payload).digest("hex");
 
-  const providedHmacBuffer = Buffer.from(providedHmac);
-  const expectedHmacBuffer = Buffer.from(expectedHmac);
+  return safeEqual(providedHmac, expectedHmac);
+}
 
-  if (providedHmacBuffer.length !== expectedHmacBuffer.length) {
-    return false;
-  }
+export function isSignedAdminSessionToken(providedToken) {
+  return typeof providedToken === "string" && providedToken.split(".").length === 3;
+}
 
-  return crypto.timingSafeEqual(providedHmacBuffer, expectedHmacBuffer);
+export function getAdminSessionExpiry(providedToken) {
+  if (!isSignedAdminSessionToken(providedToken)) return null;
+  const [, expiresAtStr] = providedToken.split(".");
+  const expiresAt = Number.parseInt(expiresAtStr, 10);
+  return Number.isFinite(expiresAt) ? expiresAt : null;
 }

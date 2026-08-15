@@ -5,6 +5,7 @@ import { generateAdminSessionToken } from "../utils/token.js";
 import { asyncHandler, HttpError } from "../utils/http.js";
 import { logger } from "../utils/logger.js";
 import { cache } from "../services/cache.js";
+import { requireAdmin } from "../middleware/requireAdmin.js";
 import { LoginPayloadSchema } from "../validators/schemas.js";
 
 const router = express.Router();
@@ -55,6 +56,22 @@ router.post(
       expiresAt: session.expiresAt,
       message: "Authentication successful. Session expires in 24 hours."
     });
+  })
+);
+
+router.post(
+  "/logout",
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+
+    if (token) {
+      await cache.del(`session:${token}`);
+    }
+
+    res.set("Cache-Control", "no-store");
+    return res.json({ success: true, message: "Session revoked." });
   })
 );
 

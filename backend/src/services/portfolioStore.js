@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import mongoose from "mongoose";
 import Portfolio from "../models/Portfolio.js";
 import { HttpError } from "../utils/http.js";
 import { logger } from "../utils/logger.js";
@@ -69,6 +70,16 @@ export async function getPortfolio() {
   const cached = await cache.get(CACHE_KEY);
   if (cached) {
     return cached;
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    const fileData = await readJsonFile(dataPath);
+    if (!fileData) {
+      throw new HttpError(503, "Portfolio data store is unavailable");
+    }
+    const validated = validatePortfolioData(fileData);
+    await cache.set(CACHE_KEY, validated, CACHE_TTL_SECONDS);
+    return validated;
   }
 
   const doc = await Portfolio.findOne().lean();

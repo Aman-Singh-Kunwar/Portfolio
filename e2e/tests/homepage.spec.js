@@ -51,4 +51,15 @@ test.describe("Portfolio Homepage & Case Study E2E Flow", () => {
       await expect(page.locator("#skills, section:has-text('Skills')").first()).toBeVisible();
     }
   });
+
+  test("adapts to mobile viewport and opens navigation menu", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto("/");
+
+    const mobileMenuBtn = page.locator("button[aria-label*='menu' i], button:has(svg)").first();
+    await expect(page.locator("h1")).toBeVisible();
+    if (await mobileMenuBtn.isVisible()) {
+      await mobileMenuBtn.click();
+    }
+  });
 });

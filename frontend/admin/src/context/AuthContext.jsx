@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { getApiUrl, validateToken } from "../api";
+import { getApiUrl, revokeToken, validateToken } from "../api";
 
 const AuthContext = createContext(null);
 
@@ -80,11 +80,12 @@ export function AuthProvider({ children }) {
   }, [apiUrl]);
 
   const logout = useCallback(() => {
+    revokeToken(apiUrl, token);
     setToken("");
     setIsAuthenticated(false);
     localStorage.removeItem("admin_token");
     sessionStorage.removeItem("admin_token");
-  }, []);
+  }, [apiUrl, token]);
 
   const value = useMemo(
     () => ({ token, apiUrl, setApiUrl, accentColor, setAccentColor, isAuthenticated, isLoading, login, logout }),

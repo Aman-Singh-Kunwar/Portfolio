@@ -33,6 +33,19 @@ export async function validateToken(apiUrl, token) {
   return token;
 }
 
+export async function revokeToken(apiUrl, token) {
+  if (!token) return;
+
+  await fetch(`${apiUrl}/api/auth/logout`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).catch(() => {
+    // Local logout should still complete if the API is unreachable.
+  });
+}
+
 export async function fetchPortfolio(apiUrl) {
   const response = await fetch(`${apiUrl}/api/portfolio`);
 

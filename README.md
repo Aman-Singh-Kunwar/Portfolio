@@ -18,7 +18,40 @@ A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and A
 
 - **🌐 Live Client Portfolio**: [https://aman-singh-kunwar-portfolio1.onrender.com/](https://aman-singh-kunwar-portfolio1.onrender.com/)
 - **🔐 Live Admin Control Center**: [https://aman-singh-kunwar-portfolio2.onrender.com/admin](https://aman-singh-kunwar-portfolio2.onrender.com/admin)
+- **⚙️ Live Backend API / Swagger**: [https://aman-singh-kunwar-portfolio.onrender.com/api/docs](https://aman-singh-kunwar-portfolio.onrender.com/api/docs)
 - **🐙 GitHub Repository**: [https://github.com/Aman-Singh-Kunwar/Portfolio](https://github.com/Aman-Singh-Kunwar/Portfolio)
+
+---
+
+## 🏛️ System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Clients["Frontend Layer (React 18 + Vite)"]
+        Client["Public Portfolio Client\n(Port 5173 / SPA)"]
+        Admin["Admin Control Center\n(Port 5174 / CRM & Studio)"]
+    end
+
+    subgraph Gateway["Backend API Gateway (Node.js 22 + Express)"]
+        Nginx["Nginx Reverse Proxy\n(SPA Routing + Asset Cache)"] --> Express["Express Application Gateway\n(Port 4000)"]
+        Express --> Auth["HMAC-SHA256 Auth\n(/api/auth/login, /logout)"]
+        Express --> Zod["Runtime Zod Validation\n(Schemas: Contact, Portfolio, Auth)"]
+        Express --> Telemetry["Observability Layer\n(Prometheus /api/metrics + X-Request-Id)"]
+        Express --> Swagger["OpenAPI 3.0 Explorer\n(/api/docs)"]
+    end
+
+    subgraph Data["Persistence & Caching Tier"]
+        Redis[("Redis 7 In-Memory Cache\n(5-min TTL + Active Session Store)")]
+        Mongo[("MongoDB Atlas Database\n(ContactMessages, Portfolio, Visits)")]
+        LocalJSON[("data/portfolio.json\n(Local Zero-Config Fallback)")]
+    end
+
+    Client --> Nginx
+    Admin --> Nginx
+    Zod --> Redis
+    Zod --> Mongo
+    Mongo -.-> LocalJSON
+```
 
 ---
 
@@ -35,7 +68,7 @@ A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and A
 - **Crash Recovery**: React Error Boundaries prevent white-screen crashes with styled fallback UI.
 
 ### 🛠️ 2. Admin Control Center (`frontend/admin`)
-- **🔐 HMAC Session Token Auth**: Secure `POST /api/auth/login` endpoint issuing 24-hour signed session tokens stored in the Redis cache tier with optional `Remember Me` browser storage.
+- **🔐 HMAC Session Token Auth**: Secure `POST /api/auth/login` endpoint issuing 24-hour signed session tokens stored in Redis when available, with in-memory fallback for local development, plus `POST /api/auth/logout` session revocation.
 - **🎨 Matched Ambient Glow UI & Theme Customizer**: Sleek dark ambient gradients matching client UI + 1-click Accent Theme Switcher (**Amber**, **Emerald**, **Violet**, **Sky**, **Rose**).
 - **📦 Visual Projects Manager**: Visual grid view to add, edit, feature, or delete projects with live database sync.
 - **🏆 Achievements Manager**: Visual CRUD manager for hackathons, certifications, and milestone achievements with link previews.
@@ -46,10 +79,10 @@ A modern, high-performance, full-stack Developer Portfolio, Recruiter CRM, and A
 - **📊 7-Day Live Traffic Bar Chart**: Real-time traffic analytics and daily visitor trend bar chart on the main Admin Dashboard.
 
 ### ⚙️ 3. Backend API Service (`backend`)
-- **RESTful Endpoints**: `/api/auth/login`, `/api/portfolio`, `/api/contact`, `/api/contact/:id/status`, `/api/visits`, `/sitemap.xml`, `/api/metrics`, and `/api/health`.
+- **RESTful Endpoints**: `/api/auth/login`, `/api/auth/logout`, `/api/portfolio`, `/api/contact`, `/api/contact/:id/status`, `/api/visits`, `/sitemap.xml`, `/api/metrics`, and `/api/health`.
 - **Interactive API Documentation**: Swagger/OpenAPI 3.0 explorer at `/api/docs` with full request/response schemas.
 - **Runtime Input Validation (Zod)**: Strict input validation and sanitization on all mutating endpoints.
-- **Distributed Caching (Redis + In-Memory)**: Sub-millisecond reads with automatic cache invalidation on admin edits.
+- **Distributed Caching (Redis + In-Memory)**: Real Redis adapter for shared cache/session storage with automatic in-memory fallback and cache invalidation on admin edits.
 - **Prometheus Telemetry**: Native Prometheus APM metrics export at `GET /api/metrics`.
 - **Security & Performance**: HMAC-SHA256 token verification, timing-safe equality checks (`crypto.timingSafeEqual`), CORS origin protection, IP rate limiting (`express-rate-limit`), and compression middleware.
 - **Observability**: `X-Request-Id` correlation headers on every response, ETag-based conditional requests (304 Not Modified), and structured cache control directives.
@@ -158,6 +191,7 @@ MONGO_URI=your_mongodb_connection_string
 REDIS_URL=redis://localhost:6379
 ADMIN_TOKEN=your_admin_token
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+API_URL=http://localhost:4000
 CLIENT_URL=http://localhost:5173
 ADMIN_URL=http://localhost:5174
 ```
@@ -186,10 +220,10 @@ App runs locally at `http://localhost:5174`.
 
 ## 🧪 Testing Suite & Quality Verification
 
-This repository maintains **29 automated tests** across all architectural layers:
+This repository maintains **30 automated tests** across all architectural layers:
 
 ```bash
-# 1. Run Unit & Integration Tests (21 tests across Backend, Client, Admin)
+# 1. Run Unit & Integration Tests (22 tests across Backend, Client, Admin)
 npm test
 
 # 2. Run Playwright E2E Browser Tests (8 tests in real Chromium)
@@ -214,10 +248,11 @@ Continuous Integration is automated via **GitHub Actions** (`.github/workflows/c
 2. Installs dependencies across Root, Backend, Client, and Admin.
 3. Executes Node.js syntax checks (`node --check`).
 4. Runs workspace TypeScript typecheck (`tsc --noEmit`).
-5. Executes all 21 unit/integration tests.
-6. Builds production client and admin Vite bundles.
-7. Validates Docker Compose multi-service configuration (`docker compose config`).
-8. Executes dependency vulnerability audits (`npm audit --audit-level=high`).
+5. Executes all 22 unit/integration tests.
+6. Installs Chromium and runs Playwright E2E tests against local client/admin servers.
+7. Builds production client and admin Vite bundles.
+8. Validates Docker Compose multi-service configuration (`docker compose config`).
+9. Executes dependency vulnerability audits (`npm audit --audit-level=high`).
 
 ---
 
