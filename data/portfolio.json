@@ -196,8 +196,8 @@
       ],
       "image": "/images/adhyanai.jpg",
       "links": {
-        "demo": "https://adhyan-ai.onrender.com/",
-        "repo": "https://github.com/HacktheWinter/ADHYAN.AI"
+        "demo": "https://adhyanai.tech/",
+        "repo": ""
       }
     },
     {
@@ -228,7 +228,7 @@
       "slug": "curriculum-management-system",
       "description": "Institutional academic workflow & curriculum management platform with 4-tier scoped RBAC, multi-stage syllabus approvals, and NBA/NAAC PO-PSO compliance tracking.",
       "highlights": [
-        "Production deployment across 12+ Schools, 30+ Departments, and 6,500+ Subjects at DBUU",
+        "Production deployment across 12+ Schools, 30+ Departments, and 9,189+ Subjects at DBUU",
         "4-tier scoped authorization tree: SuperAdmin -> Dean (School) -> HOD (Dept/Year) -> Faculty (Subject)",
         "Multi-stage approval state machine: Draft -> Submitted -> HOD Review -> Dean Approval -> Published",
         "Automated PO/PSO document mapping, revision history logs, and role-based analytical dashboards"
@@ -247,7 +247,7 @@
       "image": "/images/cms_dbuu.png",
       "links": {
         "demo": "https://cms.dbuu.ac.in/",
-        "repo": "https://github.com/Syllabus2-0/schoolsofdbuu"
+        "repo": ""
       }
     },
     {
@@ -470,7 +470,7 @@
       "metrics": [
         "12+ Schools Live",
         "30+ Departments",
-        "6,500+ Subjects Managed",
+        "9,189+ Subjects Managed",
         "4-Tier Scoped RBAC"
       ],
       "tags": [

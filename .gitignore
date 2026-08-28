@@ -92,7 +92,15 @@ Thumbs.db
 *.temp
 scratch/
 
-#local docs
+#local docs (private study guides — not pushed to GitHub)
 docs/HMAC_SESSION_AUTH.md
 docs/REDIS_CACHING_TIER.md
 docs/ZOD_VALIDATION_LAYER.md
+docs/EXPRESS_MIDDLEWARE_PIPELINE.md
+docs/MONGODB_MONGOOSE.md
+docs/CORS_SECURITY_HEADERS.md
+docs/DOCKER_COMPOSE.md
+docs/PROMETHEUS_OBSERVABILITY.md
+docs/OPENAPI_SWAGGER.md
+docs/CI_PLAYWRIGHT_SHUTDOWN.md
+docs/SEO_NGINX.md

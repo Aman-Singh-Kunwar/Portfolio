@@ -25,7 +25,7 @@ Computer Science student focused on building modern full stack web applications.
 ## 🚀 FEATURED PROJECTS
 
 ### Curriculum Management System (CMS) | Live: https://cms.dbuu.ac.in/
-- Institutional academic workflow & curriculum platform deployed across 12+ Schools, 30+ Departments, and 6,500+ Subjects at DBUU.
+- Institutional academic workflow & curriculum platform deployed across 12+ Schools, 30+ Departments, and 9,189+ Subjects at DBUU.
 - Built with React 19, TypeScript, Node.js, Express 5, MongoDB, Cloudinary, and JWT.
 - Implemented 4-tier scoped RBAC (SuperAdmin -> Dean -> HOD -> Faculty) and multi-stage syllabus approval state machine.
 

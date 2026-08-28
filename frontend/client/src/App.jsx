@@ -55,25 +55,29 @@ const fallbackData = {
     "avatarUrl": "/images/me.jpg"
   },
   "about": {
-    "summary": "Computer Science student focused on building modern full stack applications. I enjoy creating fast, accessible UIs backed by clean APIs and well structured data models.",
+    "summary": "Computer Science student and Full Stack Developer with hands-on experience building and maintaining live web platforms. I work across React, Node.js, PHP, WordPress, and MySQL, with a focus on responsive UI, APIs, and reliable web applications.",
     "highlights": [
       "Hands-on experience with React, Node.js, PHP, MySQL, WordPress, and MongoDB",
-      "Strong foundation in algorithms, data structures, and system design",
-      "Interested in cloud certifications and scalable architecture"
+      "Professional experience working on live client and government web platforms",
+      "Strong foundation in algorithms, data structures, APIs, and scalable web architecture"
     ]
   },
   "techStack": [
-    "Node.js",
+    "JavaScript",
     "React",
+    "Node.js",
+    "Express.js",
     "MongoDB",
-    "Express",
     "PHP",
     "MySQL",
     "WordPress",
+    "HTML5",
+    "CSS3",
     "Tailwind CSS",
-    "Vite",
-    "Mongoose",
-    "GitHub"
+    "Docker",
+    "Redis",
+    "Kafka",
+    "Socket.IO"
   ],
   "skills": [
     {
@@ -118,7 +122,7 @@ const fallbackData = {
     },
     {
       "name": "Python",
-      "level": 80,
+      "level": 70,
       "category": "CMS & Core"
     },
     {
@@ -135,11 +139,17 @@ const fallbackData = {
       "start": "June 2026",
       "end": "August 2026",
       "bullets": [
-        "Contributed to full stack development for live government and client web platforms, including USAME",
+        "Contributed to front-end and back-end development for live government and client web platforms, including USAME.",
         "Built responsive UI components, customized WordPress themes, and integrated secure payment processing.",
         "Performed end-to-end UI testing, QA, bug fixing, and collaborated with senior developers on deployment updates."
       ],
-      "tech": ["React", "PHP", "WordPress", "MySQL"]
+      "tech": [
+        "PHP",
+        "WordPress",
+        "MySQL",
+        "JavaScript",
+        "CSS"
+      ]
     },
     {
       "title": "Social Internship",
@@ -152,7 +162,11 @@ const fallbackData = {
         "Collaborated with teachers to build a positive learning environment",
         "Provided one on one guidance for study plans and career goals"
       ],
-      "tech": ["Teaching", "Mentorship", "Chemistry"]
+      "tech": [
+        "Teaching",
+        "Mentorship",
+        "Chemistry"
+      ]
     }
   ],
   "education": [
@@ -199,8 +213,8 @@ const fallbackData = {
       ],
       "image": "/images/adhyanai.jpg",
       "links": {
-        "demo": "https://adhyan-ai.onrender.com/",
-        "repo": "https://github.com/HacktheWinter/ADHYAN.AI"
+        "demo": "https://adhyanai.tech/",
+        "repo": ""
       }
     },
     {
@@ -231,7 +245,7 @@ const fallbackData = {
       "slug": "curriculum-management-system",
       "description": "Institutional academic workflow & curriculum management platform with 4-tier scoped RBAC, multi-stage syllabus approvals, and NBA/NAAC PO-PSO compliance tracking.",
       "highlights": [
-        "Production deployment across 12+ Schools, 30+ Departments, and 6,500+ Subjects at DBUU",
+        "Production deployment across 12+ Schools, 30+ Departments, and 9,189+ Subjects at DBUU",
         "4-tier scoped authorization tree: SuperAdmin -> Dean (School) -> HOD (Dept/Year) -> Faculty (Subject)",
         "Multi-stage approval state machine: Draft -> Submitted -> HOD Review -> Dean Approval -> Published",
         "Automated PO/PSO document mapping, revision history logs, and role-based analytical dashboards"
@@ -250,7 +264,7 @@ const fallbackData = {
       "image": "/images/cms_dbuu.png",
       "links": {
         "demo": "https://cms.dbuu.ac.in/",
-        "repo": "https://github.com/Syllabus2-0/schoolsofdbuu"
+        "repo": ""
       }
     },
     {
@@ -374,7 +388,7 @@ const fallbackData = {
         "Contributed to front-end and back-end development for live government and client web platforms.",
         "Developed responsive UI components and implemented feature enhancements across both client-facing site and admin panel.",
         "Customized WordPress themes and plugins to meet project requirements.",
-        "Integrated the ICICI Bank Payment Gateway for secure online payment processing.",
+        "Integrated the Payment Gateway for secure online payment processing.",
         "Performed UI testing, bug fixing, quality assurance, and cross-browser compatibility testing.",
         "Collaborated with senior developers to implement new features, resolve issues, and deploy project updates.",
         "Contributed to the development and maintenance of the Uttarakhand State Authority for Minority Education (USAME) website: https://usame.uk.gov.in/"
@@ -412,8 +426,20 @@ const fallbackData = {
       "project": "Eventory",
       "title": "Zero-Overbooking Concurrency: Distributed Mutexes with Redis Lua & Kafka",
       "tagline": "Handling 100,000+ requests/sec on single seats without database race conditions or deadlocks.",
-      "metrics": ["100k req/s Scale", "Zero Overbooking Guarantee", "500 Concurrent Test Burst", "5-Min TTL Mutex"],
-      "tags": ["Redis", "Lua Scripts", "Kafka", "Socket.IO", "Node.js", "Docker"],
+      "metrics": [
+        "100k req/s Scale",
+        "Zero Overbooking Guarantee",
+        "500 Concurrent Test Burst",
+        "5-Min TTL Mutex"
+      ],
+      "tags": [
+        "Redis",
+        "Lua Scripts",
+        "Kafka",
+        "Socket.IO",
+        "Node.js",
+        "Docker"
+      ],
       "problem": "When popular events go on sale, thousands of users attempt to purchase the exact same seat at the exact same millisecond. Traditional check-then-update SQL/MongoDB queries create race conditions where multiple requests pass the availability check before any write is committed, leading to catastrophic double bookings.",
       "architecture": [
         "Atomic Single-Threaded Locking: Custom Lua script executes in Redis memory atomically, checking existence and setting user-bound key in one operation without CPU context switching.",
@@ -429,8 +455,20 @@ const fallbackData = {
       "project": "ADHYAN.AI",
       "title": "Smart Classroom AI: Source-Grounded OCR Grading, Device Binding & Rotating HMAC Tokens",
       "tagline": "End-to-end AI assessment engine automating assessment generation, subjective grading, and anti-proxy attendance.",
-      "metrics": ["Gemini 2.5 Flash Pipeline", "70% Legibility OCR Guard", "Slot-Based Device UUIDs", "WebSocket Rotating HMAC QR"],
-      "tags": ["Gemini 2.5 Flash", "RAG", "GridFS", "WebSockets", "HMAC-SHA256", "React 18"],
+      "metrics": [
+        "Gemini 2.5 Flash Pipeline",
+        "70% Legibility OCR Guard",
+        "Slot-Based Device UUIDs",
+        "WebSocket Rotating HMAC QR"
+      ],
+      "tags": [
+        "Gemini 2.5 Flash",
+        "RAG",
+        "GridFS",
+        "WebSockets",
+        "HMAC-SHA256",
+        "React 18"
+      ],
       "problem": "Digital education platforms struggle with three massive bottlenecks: teacher burnout from manual grading, unreliable hallucinating AI evaluators lacking source grounding, and rampant cheating (credential sharing & QR screenshot attendance proxies).",
       "architecture": [
         "RAG-Grounded Assessment Engine: Extracts structured content from uploaded PDF lecture notes via Gemini 2.5 Flash, generating tiered MCQs and subjective test papers strictly constrained to source material.",
@@ -446,8 +484,21 @@ const fallbackData = {
       "project": "Curriculum Management System (CMS)",
       "title": "Enterprise Academic Workflow: 4-Tier Scoped RBAC & Multi-Stage State Machines",
       "tagline": "Institutional academic workflow platform managing curriculum creation, NBA/NAAC PO-PSO compliance, and multi-tier approval queues.",
-      "metrics": ["12+ Schools Live", "30+ Departments", "6,500+ Subjects Managed", "4-Tier Scoped RBAC"],
-      "tags": ["React 19", "TypeScript", "Node.js", "Express 5", "MongoDB", "Cloudinary", "JWT"],
+      "metrics": [
+        "12+ Schools Live",
+        "30+ Departments",
+        "9,189+ Subjects Managed",
+        "4-Tier Scoped RBAC"
+      ],
+      "tags": [
+        "React 19",
+        "TypeScript",
+        "Node.js",
+        "Express 5",
+        "MongoDB",
+        "Cloudinary",
+        "JWT"
+      ],
       "problem": "Universities with multiple schools and departments struggle with fragmented syllabus drafting, decentralized approval bottlenecks, and data leakage across unauthorized faculty or department scopes during accreditation audits (NBA/NAAC).",
       "architecture": [
         "Hierarchical Academic Domain Model: Enforces strict encapsulation across School -> Department -> Program -> Subject.",
@@ -463,8 +514,21 @@ const fallbackData = {
       "project": "EcoCommute",
       "title": "Multimodal Routing: Predicting Carbon Footprint & Traffic Delays with Flask ML",
       "tagline": "AI-enabled sustainable transport planner optimizing for low-emission and time-efficient multimodal routes.",
-      "metrics": ["1st Place Hackathon Winner", "Multimodal Optimization", "Real-Time Carbon API", "Flask ML Microservice"],
-      "tags": ["Python", "Flask", "scikit-learn", "React", "Leaflet", "OpenRouteService", "MongoDB"],
+      "metrics": [
+        "1st Place Hackathon Winner",
+        "Multimodal Optimization",
+        "Real-Time Carbon API",
+        "Flask ML Microservice"
+      ],
+      "tags": [
+        "Python",
+        "Flask",
+        "scikit-learn",
+        "React",
+        "Leaflet",
+        "OpenRouteService",
+        "MongoDB"
+      ],
       "problem": "Standard navigation engines optimize exclusively for time or distance, ignoring vehicle emission intensity, atmospheric weather hazards, and environmental impact.",
       "architecture": [
         "Composite Geospatial Routing Engine: Integrates OpenRouteService heuristics with live OpenWeather data to calculate multimodal travel alternatives (transit, carpooling, cycling).",
@@ -477,7 +541,7 @@ const fallbackData = {
     }
   ],
   "contact": {
-    "address": "Police Family Quarters, Raipur Road, Dehradun",
+    "address": "Dehradun, Uttarakhand, India",
     "email": "amansinghkunwar07@gmail.com",
     "phone": "+91 7983932346"
   }
