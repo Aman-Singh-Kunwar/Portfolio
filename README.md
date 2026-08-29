@@ -1,7 +1,7 @@
 # 🚀 Aman Singh Kunwar — Personal Portfolio & Admin Panel
 
 [![CI Pipeline](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aman-Singh-Kunwar/Portfolio/actions/workflows/ci.yml)
-![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?logo=node.js)
+![Node.js](https://img.shields.io/badge/Node.js-24.x-339933?logo=node.js)
 ![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)
 ![Playwright](https://img.shields.io/badge/Playwright-E2E-45ba4b?logo=playwright)
@@ -32,7 +32,7 @@ flowchart TD
         Admin["Admin Panel\n(Port 5174 / Content & Messages)"]
     end
 
-    subgraph Gateway["Backend API (Node.js 22 + Express)"]
+    subgraph Gateway["Backend API (Node.js 24 + Express)"]
         Nginx["Nginx Reverse Proxy\n(SPA Routing + Asset Cache)"] --> Express["Express Backend API\n(Port 4000)"]
         Express --> Auth["HMAC-SHA256 Auth\n(/api/auth/login, /logout)"]
         Express --> Zod["Runtime Zod Validation\n(Contact, Portfolio, Auth)"]
@@ -112,7 +112,7 @@ Building this system provided hands-on experience with production-level full-sta
 ## 🛠️ Technology Stack
 
 - **Frontend**: React 18, Vite, React Router 7, Tailwind CSS, React Icons
-- **Backend**: Node.js 22, Express 4, Zod, Native Crypto (HMAC-SHA256), Swagger / OpenAPI 3.0
+- **Backend**: Node.js 24, Express 4, Zod, Native Crypto (HMAC-SHA256), Swagger / OpenAPI 3.0
 - **Database & Cache**: MongoDB Atlas (Mongoose), Redis 7 (with in-memory fallback)
 - **Testing**: Playwright (E2E browser tests), Node.js native test runner (`node:test`)
 - **DevOps & Tooling**: Docker, Docker Compose, Nginx, TypeScript, GitHub Actions CI
